@@ -26,7 +26,7 @@ const Blocks: BlocksType = {
 }
 
 /**
- * Used by the <PageBuilder>, this component renders a the component that matches the block type.
+ * Used by the <PageBuilder>, this component renders the component that matches the block type.
  */
 export default function BlockRenderer({block, index, pageId, pageType}: BlockProps) {
   // Block does exist

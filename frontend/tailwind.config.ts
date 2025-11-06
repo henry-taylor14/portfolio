@@ -93,6 +93,12 @@ export default {
           900: '#183122',
           950: '#14211a',
         },
+        purple: {
+          950: '#513952'
+        },
+        pink:{
+          950: '#f9c2bc'
+        }
       },
       fontFamily: {
         sans: ['var(--font-inter)'],

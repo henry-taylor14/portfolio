@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import HerotaLogo from './HerotaText'
 import {settingsQuery} from '@/sanity/lib/queries'
 import {sanityFetch} from '@/sanity/lib/live'
 
@@ -8,13 +9,11 @@ export default async function Header() {
   })
 
   return (
-    <header className="fixed z-50 h-24 inset-0 bg-white/80 flex items-center backdrop-blur-lg">
+    <header className="fixed z-50 h-24 inset-0 bg-purple-950 dark:bg-[#f9c2bc] flex items-center backdrop-blur-lg">
       <div className="container py-6 px-2 sm:px-6">
         <div className="flex items-center justify-between gap-5">
-          <Link className="flex items-center gap-2" href="/">
-            <span className="text-lg sm:text-2xl pl-2 font-semibold">
-              {settings?.title || 'Sanity + Next.js'}
-            </span>
+          <Link className="flex items-center gap-2 m-2" href="/">
+            <HerotaLogo />
           </Link>
 
           <nav>
@@ -23,19 +22,25 @@ export default async function Header() {
               className="flex items-center gap-4 md:gap-6 leading-5 text-xs sm:text-base tracking-tight font-mono"
             >
               <li>
-                <Link href="/about" className="hover:underline">
+                <Link href="/about" className="hover:underline text-white dark:text-purple-950">
                   About
+                </Link>
+              </li>
+
+              <li>
+                <Link href="/contact" className="hover:underline text-white dark:text-purple-950">
+                  Contact
                 </Link>
               </li>
 
               <li className="sm:before:w-[1px] sm:before:bg-gray-200 before:block flex sm:gap-4 md:gap-6">
                 <Link
                   className="rounded-full flex gap-4 items-center bg-black hover:bg-blue focus:bg-blue py-2 px-4 justify-center sm:py-3 sm:px-6 text-white transition-colors duration-200"
-                  href="https://github.com/sanity-io/sanity-template-nextjs-clean"
+                  href="https://github.com/henry-taylor14/"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <span className="whitespace-nowrap">View on GitHub</span>
+                  <span className="whitespace-nowrap">Find me on GitHub</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"

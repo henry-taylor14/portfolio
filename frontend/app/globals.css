@@ -13,7 +13,7 @@
   --color-framework: #000;
   --color-black: #0b0b0b;
   --color-white: #fff;
-  --color-brand: #f50;
+  --color-brand: #513952;
   --color-blue: #0052ff;
   --color-yellow: #cdea19;
   --color-gray-50: #f6f6f8;
@@ -27,6 +27,8 @@
   --color-gray-800: #252837;
   --color-gray-900: #1b1d27;
   --color-gray-950: #13141b;
+  --color-purple-950: #513952;
+  --color-pink-500:#f9c2bc;
 
   --font-display: 'Inter', 'sans-serif';
   --font-sans: 'Inter', 'sans-serif';
