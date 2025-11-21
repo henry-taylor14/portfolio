@@ -1,6 +1,6 @@
 {
-  "name": "portfolio",
-  "description": "Next.js + Sanity: A Powerful Website Starter with Real-time Visual Editing",
+  "name": "portfolio-blog",
+  "description": "A portfolio blog for me.",
   "keywords": [
     "Sanity",
     "Next.js",
@@ -9,9 +9,9 @@
     "Live Content API (LCAPI)",
     "Real-time"
   ],
-  "homepage": "https://github.com/sanity-io/sanity-template-nextjs-clean#readme",
+  "homepage": "https://github.com/henry-taylor14/portfolio",
   "bugs": {
-    "url": "https://github.com/sanity-io/sanity-template-nextjs-clean/issues"
+    "url": "https://github.com/henry-taylor14/portfolio/issues"
   },
   "workspaces": [
     "studio",
