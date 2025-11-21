@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import HerotaLogo from './HerotaText'
+import HerotaText from './HerotaText'
 import {settingsQuery} from '@/sanity/lib/queries'
 import {sanityFetch} from '@/sanity/lib/live'
 
@@ -13,7 +13,7 @@ export default async function Header() {
       <div className="container py-6 px-2 sm:px-6">
         <div className="flex items-center justify-between gap-5">
           <Link className="flex items-center gap-2 m-2" href="/">
-            <HerotaLogo />
+            <HerotaText />
           </Link>
 
           <nav>

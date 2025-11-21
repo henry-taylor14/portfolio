@@ -1,5 +1,4 @@
 import Link from 'next/link'
-
 import {sanityFetch} from '@/sanity/lib/live'
 import {morePostsQuery, allPostsQuery} from '@/sanity/lib/queries'
 import {Post as PostType, AllPostsQueryResult} from '@/sanity.types'
@@ -21,7 +20,7 @@ const Post = ({post}: {post: AllPostsQueryResult[number]}) => {
     <article
       data-sanity={attr()}
       key={_id}
-      className="border border-gray-200 rounded-sm p-6 bg-gray-50 flex flex-col justify-between transition-colors hover:bg-white relative"
+      className="border border-gray-200 rounded-sm p-6 bg-gray-50 dark:bg-gray-700 hover:dark:bg-gray-900 flex flex-col justify-between transition-colors hover:bg-white relative"
     >
       <Link className="hover:text-brand underline transition-colors" href={`/posts/${slug}`}>
         <span className="absolute inset-0 z-10" />
@@ -29,7 +28,7 @@ const Post = ({post}: {post: AllPostsQueryResult[number]}) => {
       <div>
         <h3 className="text-2xl font-bold mb-4 leading-tight">{title}</h3>
 
-        <p className="line-clamp-3 text-sm leading-6 text-gray-600 max-w-[70ch]">{excerpt}</p>
+        <p className="line-clamp-3 text-sm leading-6 text-gray-600 dark:text-gray-100 max-w-[70ch]">{excerpt}</p>
       </div>
       <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
         {author && author.firstName && author.lastName && (
@@ -56,11 +55,11 @@ const Posts = ({
 }) => (
   <div>
     {heading && (
-      <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">
+      <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-200 sm:text-4xl lg:text-5xl">
         {heading}
       </h2>
     )}
-    {subHeading && <p className="mt-2 text-lg leading-8 text-gray-600">{subHeading}</p>}
+    {subHeading && <p className="mt-2 text-lg leading-8 text-gray-600 dark:text-gray-300">{subHeading}</p>}
     <div className="pt-6 space-y-6">{children}</div>
   </div>
 )

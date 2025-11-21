@@ -39,13 +39,13 @@ export default async function Page() {
             <div className="prose sm:prose-lg md:prose-xl xl:prose-2xl text-gray-700 prose-a:text-gray-700 dark:text-gray-100 dark:prose-a:text-gray-100 font-light text-center">
               {settings?.description && <PortableText value={settings.description} />}
               <div className="flex items-center flex-col gap-4">
-                placeholder text
+                Check out what projects I've been working on or reach out to contact me!
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div className="border-t border-gray-100 bg-gray-50">
+      <div className="border-t border-gray-100 bg-gray-50 dark:bg-gray-700">
         <div className="container">
           <aside className="py-12 sm:py-20">
             <Suspense>{await AllPosts()}</Suspense>

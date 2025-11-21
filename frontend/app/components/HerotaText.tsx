@@ -1,6 +1,6 @@
 import React from "react";
 
-const HerotaLogo: React.FC = () => {
+const HerotaText: React.FC = () => {
   return (
     <div
       className="
@@ -69,4 +69,4 @@ const HerotaLogo: React.FC = () => {
   );
 };
 
-export default HerotaLogo;
+export default HerotaText;
