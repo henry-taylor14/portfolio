@@ -39,7 +39,7 @@ export default async function Page() {
             <div className="prose sm:prose-lg md:prose-xl xl:prose-2xl text-gray-700 prose-a:text-gray-700 dark:text-gray-100 dark:prose-a:text-gray-100 font-light text-center">
               {settings?.description && <PortableText value={settings.description} />}
               <div className="flex items-center flex-col gap-4">
-                Check out what projects I've been working on or reach out to contact me!
+                Check out my recent projects or reach out to contact me!
               </div>
             </div>
           </div>

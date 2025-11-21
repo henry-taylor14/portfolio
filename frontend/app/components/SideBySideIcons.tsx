@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import Envelope  from './Envelope'
-import Logo from './icons/icon.svg'
 
 export default function SideBySideIcons() {
   return (
