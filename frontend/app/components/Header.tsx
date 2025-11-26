@@ -1,12 +1,7 @@
 import Link from 'next/link'
 import HerotaText from './HerotaText'
-import {settingsQuery} from '@/sanity/lib/queries'
-import {sanityFetch} from '@/sanity/lib/live'
 
 export default async function Header() {
-  const {data: settings} = await sanityFetch({
-    query: settingsQuery,
-  })
 
   return (
     <header className="fixed z-50 h-24 inset-0 bg-purple-950 dark:bg-[#f9c2bc] flex items-center backdrop-blur-lg">
