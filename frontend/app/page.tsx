@@ -1,5 +1,4 @@
 import {Suspense} from 'react'
-import Link from 'next/link'
 import {PortableText} from '@portabletext/react'
 import {AllPosts} from '@/app/components/Posts'
 import SideBySideIcons from '@/app/components/SideBySideIcons'

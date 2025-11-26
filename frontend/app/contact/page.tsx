@@ -4,7 +4,7 @@
 import { useState } from "react";
 
 export default function ContactPage() {
-  const [status, setStatus] = useState<null | "idle" | "sending" | "success" | "error">("idle");
+  const [status, setStatus] = useState< "idle" | "sending" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
