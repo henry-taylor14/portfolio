@@ -1,11 +1,9 @@
 // app/contact/page.tsx
-
 "use client";
-
 import { useState } from "react";
 
 export default function ContactPage() {
-  const [status, setStatus] = useState< "idle" | "sending" | "success" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -19,7 +17,7 @@ export default function ContactPage() {
       name: fd.get("name"),
       email: fd.get("email"),
       message: fd.get("message"),
-      hp: fd.get("hp") // honeypot
+      hp: fd.get("hp")
     };
 
     try {
@@ -29,12 +27,14 @@ export default function ContactPage() {
         body: JSON.stringify(payload),
       });
 
-      if (res.ok) {
+      const data = await res.json();
+
+      // Match your API response structure
+      if (res.ok && data.ok) {
         setStatus("success");
         form.reset();
       } else {
-        const data = await res.json();
-        setErrorMsg(data?.error || "Failed to send");
+        setErrorMsg(data.error || "Failed to send");
         setStatus("error");
       }
     } catch (err) {
@@ -47,13 +47,29 @@ export default function ContactPage() {
   return (
     <section className="max-w-xl mx-auto p-6">
       <h1 className="text-2xl font-semibold mb-4">Contact</h1>
-
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input name="name" placeholder="Your name" className="w-full p-3 border rounded" required />
-        <input name="email" type="email" placeholder="Your email" className="w-full p-3 border rounded" required />
-        <textarea name="message" placeholder="Tell me about your project..." rows={6} className="w-full p-3 border rounded" required />
-
-        {/* Honeypot: hidden to users but bots may fill */}
+        <input 
+          name="name" 
+          placeholder="Your name" 
+          className="w-full p-3 border rounded text-black" 
+          required 
+        />
+        <input 
+          name="email" 
+          type="email" 
+          placeholder="Your email" 
+          className="w-full p-3 border rounded text-black" 
+          required 
+        />
+        <textarea 
+          name="message" 
+          placeholder="Tell me about your project..." 
+          rows={6} 
+          className="w-full p-3 border rounded text-black" 
+          required 
+        />
+        
+        {/* Honeypot */}
         <div style={{ display: "none" }}>
           <label>Do not fill</label>
           <input name="hp" tabIndex={-1} autoComplete="off" />
@@ -61,14 +77,18 @@ export default function ContactPage() {
 
         <button
           type="submit"
-          className="px-5 py-3 bg-[#513952] text-white rounded disabled:opacity-50"
+          className="px-5 py-3 bg-[#513952] text-white rounded disabled:opacity-50 hover:bg-[#6b4b6d] transition-colors"
           disabled={status === "sending"}
         >
           {status === "sending" ? "Sending…" : "Send Message"}
         </button>
 
-        {status === "success" && <p className="text-green-600">Message sent — thank you!</p>}
-        {status === "error" && <p className="text-red-600">{errorMsg || "Something went wrong"}</p>}
+        {status === "success" && (
+          <p className="text-green-600">Message sent — thank you!</p>
+        )}
+        {status === "error" && (
+          <p className="text-red-600">{errorMsg || "Something went wrong"}</p>
+        )}
       </form>
     </section>
   );
