@@ -17,10 +17,6 @@ import {settingsQuery} from '@/sanity/lib/queries'
 import {resolveOpenGraphImage} from '@/sanity/lib/utils'
 import {handleError} from './client-utils'
 
-/**
- * Generate metadata for the page.
- * Learn more: https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function
- */
 export async function generateMetadata(): Promise<Metadata> {
   const {data: settings} = await sanityFetch({
     query: settingsQuery,
