@@ -108,5 +108,10 @@ export default {
   future: {
     hoverOnlyWhenSupported: true,
   },
-  plugins: [typography],
+  plugins: [typography,
+        function({ addVariant }: { addVariant: (name: string, definition: string) => void }) {
+      addVariant('hover-device', '@media (hover: hover) and (pointer: fine)')
+    }
+
+  ],
 } satisfies Config

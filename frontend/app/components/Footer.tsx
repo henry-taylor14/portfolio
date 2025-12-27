@@ -1,4 +1,6 @@
 import Link from 'next/link'
+import LinkedInIcon from './LinkedIn'
+import GitHubIcon from './GitHub'
 
 export default function Footer() {
   return (
@@ -10,24 +12,28 @@ export default function Footer() {
               role="list"
               className="flex items-center gap-4 md:gap-6 leading-5 text-xs sm:text-base tracking-tight font-mono"
             >
-            <li className="mb-10 text-center text-4xl font-mono leading-tight tracking-tighter lg:mb-0 lg:w-1/2 lg:pr-4 lg:text-left lg:text-2xl">
-              Built with Sanity + Next.js.
+            <li className="mb-10 text-center font-mono leading-tight tracking-tighter lg:mb-0 w-1/2 lg:pr-4 lg:text-left lg:text-3xl">
+              Find me elsewhere.
             </li>
-            <li className="mb-10 text-center text-4xl font-mono leading-tight tracking-tighter lg:mb-0 lg:w-1/2 lg:pr-4 lg:text-left lg:text-2xl">
-              Pushed to the Hub.
+            <li className="mb-10 leading-tight tracking-tighter lg:mb-0 lg:pr-4 lg:text-left lg:text-2xl">
+              <Link href='https://www.linkedin.com/in/henry-taylor-4316861b7/'>
+                <LinkedInIcon className='w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-10 lg:h-10 text-black dark:text-gray-50 hover:opacity-70 duration-300 hover:scale-115 p-1 border-2 rounded-sm'/>
+              </Link>
             </li>
-            <li className="mb-10 text-center text-4xl font-mono leading-tight tracking-tighter lg:mb-0 lg:w-1/2 lg:pr-4 lg:text-left lg:text-2xl">
-              Deployed with Vercel.
+            <li className="mb-10 leading-tight tracking-tighter lg:mb-0 lg:text-left lg:text-2xl">
+              <Link href='https://github.com/henry-taylor14/'>
+                  <GitHubIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 dark:invert-0 invert transform-all hover:opacity-70 duration-300 hover:scale-115 p-1' />
+              </Link>
             </li>
           </ul>
           <div className="flex flex-col gap-3 items-center justify-center lg:w-1/2 lg:flex-row lg:pl-4">
             <Link
-              className="rounded-full flex gap-4 items-center bg-black hover:bg-blue focus:bg-blue py-2 px-4 justify-center sm:py-3 sm:px-6 text-white transition-colors duration-200"
+              className="rounded-full flex gap-4 items-center bg-black transition-all duration-300 ease-in-out invert-0 hover:invert py-2 px-4 justify-center sm:py-3 sm:px-6 text-white"
               href="https://github.com/henry-taylor14/portfolio/"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <span className="whitespace-nowrap">See this project on GitHub</span>
+              <span className="whitespace-nowrap">See the source code</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"

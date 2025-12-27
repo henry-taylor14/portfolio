@@ -21,7 +21,7 @@ const Envelope: React.FC = () => {
             <circle cx="90" cy="90" r="90" className="fill-[#6b4b6d]" />
             </mask>
             <g mask="url(#mask0_herota_envelope)">
-            <circle cx="90" cy="90" r="90" className="fill-brand dark:fill-[#f9c2bc]" strokeWidth="6" />
+            <circle cx="90" cy="90" r="90" className="fill-black dark:fill-[#d8aa2b]" strokeWidth="6" /> {/* className= "fill-brand dark:fill-[#f9c2bc]" */}
 
             {/* Envelope body */}
             <rect
