@@ -70,11 +70,11 @@ export default defineConfig({
           },
           {
             route: '/:slug',
-            filter: `_type == "page" && slug.current == $slug || _id == $slug`,
+            filter: `_type == "page" && (slug.current == $slug || _id == $slug)`,
           },
           {
             route: '/posts/:slug',
-            filter: `_type == "post" && slug.current == $slug || _id == $slug`,
+            filter: `_type == "post" && (slug.current == $slug || _id == $slug)`,
           },
         ]),
         // Locations Resolver API allows you to define where data is being used in your application. https://www.sanity.io/docs/presentation-resolver-api#8d8bca7bfcd7
@@ -125,7 +125,7 @@ export default defineConfig({
     // Additional plugins for enhanced functionality
     unsplashImageAsset(),
     assist(),
-    visionTool(),
+    visionTool({defaultApiVersion: '2024-01-01'}),
   ],
 
   // Schema configuration, imported from ./src/schemaTypes/index.ts
