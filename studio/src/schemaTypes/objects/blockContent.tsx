@@ -19,6 +19,11 @@ export const blockContent = defineType({
   of: [
     defineArrayMember({
       type: 'block',
+        styles: [
+          {title: 'Normal', value: 'normal'},
+          {title: 'Heading 2', value: 'h2'},
+          {title: 'Quote', value: 'blockquote'},
+        ],
       marks: {
         annotations: [
           {
@@ -90,6 +95,24 @@ export const blockContent = defineType({
             ],
           },
         ],
+      },
+    }),
+    defineArrayMember({
+      type: 'image',
+      options: {hotspot: true},
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alt text',
+          type: 'string',
+          description: 'Important for accessibility and SEO',
+        }),
+      ],
+    }),
+    defineArrayMember({
+      type: 'code',
+      options: {
+        withFilename: true,
       },
     }),
   ],

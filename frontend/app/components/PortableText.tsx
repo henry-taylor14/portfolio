@@ -1,14 +1,11 @@
-/**
- * This component uses Portable Text to render a post body.
- *
- * You can learn more about Portable Text on:
- * https://www.sanity.io/docs/block-content
- * https://github.com/portabletext/react-portabletext
- * https://portabletext.org/
- *
- */
+// frontend/app/components/PortableText.tsx
 
 import {PortableText, type PortableTextComponents, type PortableTextBlock} from 'next-sanity'
+import Image from 'next/image'
+import {urlFor} from '@/sanity/lib/image'
+
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter'
+import {oneDark} from 'react-syntax-highlighter/dist/cjs/styles/prism'
 
 import ResolvedLink from '@/app/components/ResolvedLink'
 
@@ -20,6 +17,49 @@ export default function CustomPortableText({
   value: PortableTextBlock[]
 }) {
   const components: PortableTextComponents = {
+
+    types: {
+      image: ({value}) => {
+        if (!value?.asset?._ref) return null
+
+        return (
+          <figure className="my-8">
+            <Image
+              src={urlFor(value).width(800).fit('max').auto('format').url()}
+              alt={value.alt || ''}
+              width={800}
+              height={450}
+              className="rounded-lg"
+            />
+            {value.alt && (
+              <figcaption className="mt-2 text-center text-sm text-gray-500">
+                {value.alt}
+              </figcaption>
+            )}
+          </figure>
+        )
+      },
+      code: ({value}) => (
+        <div className="my-8">
+          {value.filename && (
+            <div className="rounded-t bg-gray-800 px-4 py-2 text-sm text-gray-200">
+              {value.filename}
+            </div>
+          )}
+          <SyntaxHighlighter
+            language={value.language || 'text'}
+            style={oneDark}
+            customStyle={{
+              margin: 0,
+              borderRadius: value.filename ? '0 0 0.5rem 0.5rem' : '0.5rem',
+            }}
+          >
+            {value.code}
+          </SyntaxHighlighter>
+        </div>
+      ),
+    },
+
     block: {
       h1: ({children, value}) => (
         // Add an anchor to the h1
@@ -74,6 +114,7 @@ export default function CustomPortableText({
         )
       },
     },
+
     marks: {
       link: ({children, value: link}) => {
         return <ResolvedLink link={link}>{children}</ResolvedLink>
