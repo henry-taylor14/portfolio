@@ -59,8 +59,8 @@ export default defineConfig({
       previewUrl: {
         origin: SANITY_STUDIO_PREVIEW_URL,
         allowOrigins:[
-          "https://www.herotatech.com",
           "https://herotatech.com",
+          "https://portfolio-iota-peach-68.vercel.app/",
         ],
         previewMode: {
           enable: '/api/draft-mode/enable',
