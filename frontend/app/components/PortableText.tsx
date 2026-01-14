@@ -23,13 +23,16 @@ export default function CustomPortableText({
         if (!value?.asset?._ref) return null
 
         return (
-          <figure className="my-8">
+          <figure className="my-8 mx-auto max-w-4xl px-4">
             <Image
-              src={urlFor(value).width(800).fit('max').auto('format').url()}
+              src={urlFor(value).width(1200).auto('format').url()}
               alt={value.alt || ''}
-              width={800}
-              height={450}
-              className="rounded-lg"
+              width={1200}
+              height={600}
+              sizes="(max-width: 640px) 100vw,
+                    (max-width: 1024px) 90vw,
+                    800px"
+              className="w-full h-auto rounded-lg mx-auto"
             />
             {value.alt && (
               <figcaption className="mt-2 text-center text-sm text-gray-500">

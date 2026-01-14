@@ -29,5 +29,5 @@ export const previewClient = createClient({
   dataset,
   apiVersion: '2024-01-01',
   useCdn: false,
-  token,
+  withCredentials: true,
 })
