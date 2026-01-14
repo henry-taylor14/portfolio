@@ -23,7 +23,7 @@ const projectId = process.env.SANITY_STUDIO_PROJECT_ID || 'your-projectID'
 const dataset = process.env.SANITY_STUDIO_DATASET || 'production'
 
 // URL for preview functionality, defaults to localhost:3000 if not set
-const SANITY_STUDIO_PREVIEW_URL = process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000'
+const SANITY_STUDIO_PREVIEW_URL = process.env.SANITY_STUDIO_PREVIEW_URL
 
 // Define the home location for the presentation tool
 const homeLocation = {
@@ -58,6 +58,10 @@ export default defineConfig({
     presentationTool({
       previewUrl: {
         origin: SANITY_STUDIO_PREVIEW_URL,
+        allowOrigins:[
+          "https://www.herotatech.com",
+          "https://herotatech.com",
+        ],
         previewMode: {
           enable: '/api/draft-mode/enable',
         },
