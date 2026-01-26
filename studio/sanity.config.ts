@@ -59,8 +59,9 @@ export default defineConfig({
       previewUrl: {
         origin: SANITY_STUDIO_PREVIEW_URL,
         allowOrigins:[
-          "https://herotatech.com",
-          "https://portfolio-iota-peach-68.vercel.app/",
+          'https://herotatech.com',
+          "https://www.herotatech.com",
+          "https://portfolio-iota-peach-68.vercel.app",
         ],
         previewMode: {
           enable: '/api/draft-mode/enable',
@@ -77,6 +78,10 @@ export default defineConfig({
             route: '/:slug',
             filter: `_type == "page" && (slug.current == $slug || _id == $slug)`,
           },
+          // {
+          //   route: '/posts',
+          //   filter: `_type == "posts" && _id == "posts"`,
+          // },
           {
             route: '/posts/:slug',
             filter: `_type == "post" && (slug.current == $slug || _id == $slug)`,
