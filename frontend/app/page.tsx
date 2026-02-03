@@ -4,6 +4,7 @@ import {AllPosts} from '@/app/components/Posts'
 import SideBySideIcons from '@/app/components/SideBySideIcons'
 import {settingsQuery} from '@/sanity/lib/queries'
 import {sanityFetch} from '@/sanity/lib/live'
+import Clippy from './components/Clippy'
 
 export default async function Page() {
   const {data: settings} = await sanityFetch({
@@ -44,6 +45,7 @@ export default async function Page() {
           </div>
         </div>
       </div>
+      <Clippy/>
       <div className="border-t border-gray-100 bg-gray-50 dark:bg-gray-700">
         <div className="container">
           <aside className="py-12 sm:py-20">
