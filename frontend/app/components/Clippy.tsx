@@ -275,7 +275,7 @@ export default function Clippy() {
               {messages.length === 0 && (
                 <div className="flex flex-col bg-purple-200 dark:bg-pink-300 items-center justify-center py-6 px-4">
                   <p className="text-xs text-gray-500 dark:text-gray-600 font-mono text-center">
-                    It looks like you're browsing this website.
+                    It looks like you&apos;re browsing this website.
                     <br />I suppose I could help you...
                   </p>
                 </div>
