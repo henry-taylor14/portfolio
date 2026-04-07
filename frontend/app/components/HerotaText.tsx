@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 
 const HerotaText: React.FC = () => {
   return (
@@ -13,10 +13,10 @@ const HerotaText: React.FC = () => {
         transition-all
         duration-300
         hover:scale-103
-        bg-[#513952]
-        hover:bg-[#6b4b6d]
-        dark:bg-[#f9c2bc]
-        dark:hover:bg-[#f7b3ac]
+        bg-purple-800
+        hover:bg-purple-700
+        dark:bg-pink-600
+        dark:hover:bg-pink-400
       "
     >
       <svg
@@ -35,7 +35,7 @@ const HerotaText: React.FC = () => {
           fontFamily="Inter, sans-serif"
           fontWeight="700"
           fontSize="48"
-          className="fill-[#f9c2bc] dark:fill-[#6b4b6d] transition-all duration-300"
+          className="fill-pink-500 dark:fill-purple-600 transition-all duration-300"
         >
           HEROTA
         </text>
@@ -47,7 +47,7 @@ const HerotaText: React.FC = () => {
           y1="65%"
           y2="65%"
           strokeWidth="3"
-          className="transition-all duration-300 stroke-[#dfc06b] dark:stroke-[#d8aa2b]"
+          className="transition-all duration-300 stroke-gold-300 dark:stroke-gold-500"
         />
 
         {/* TECH text */}
@@ -60,13 +60,13 @@ const HerotaText: React.FC = () => {
           fontWeight="500"
           fontSize="24"
           letterSpacing="4"
-          className="fill-[#dfc06b] dark:fill-[#d8aa2b] transition-all duration-300"
+          className="fill-gold-300 dark:fill-gray-700 transition-all duration-300"
         >
           TECH
         </text>
       </svg>
     </div>
-  );
-};
+  )
+}
 
-export default HerotaText;
+export default HerotaText

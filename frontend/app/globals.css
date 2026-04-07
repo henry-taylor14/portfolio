@@ -2,6 +2,8 @@
 
 @plugin "@tailwindcss/typography";
 
+@custom-variant hover-device (@media (hover: hover) and (pointer: fine));
+
 @utility container {
   margin: 0 auto;
   padding: 0 2rem;
@@ -27,11 +29,57 @@
   --color-gray-800: #252837;
   --color-gray-900: #1b1d27;
   --color-gray-950: #13141b;
-  --color-purple-950: #513952;
-  --color-pink-500:#f9c2bc;
+  --color-purple-50: #faf7fb;
+  --color-purple-100: #f2eaf4;
+  --color-purple-200: #e5d6e8;
+  --color-purple-300: #d2bdd5;
+  --color-purple-400: #be9fc1;
+  --color-purple-500: #a682aa;
+  --color-purple-600: #8a6890;
+  --color-purple-700: #6b4b6d;
+  --color-purple-800: #513952;
+  --color-purple-900: #3d2b3e;
+  --color-purple-950: #2e1f2e;
+
+  --color-pink-50: #fef7f6;
+  --color-pink-100: #feedea;
+  --color-pink-200: #fddbd6;
+  --color-pink-300: #fccdc7;
+  --color-pink-400: #fac6bf;
+  --color-pink-500: #f9c2bc;
+  --color-pink-600: #e0a9a2;
+  --color-pink-700: #be8780;
+  --color-pink-800: #966661;
+  --color-pink-900: #6e4a46;
+  --color-pink-950: #4c3331;
+
+  --color-gold-50: #fcf8ed;
+  --color-gold-100: #f9f0d7;
+  --color-gold-200: #f2e1b0;
+  --color-gold-300: #dfc06b;
+  --color-gold-400: #e1bb51;
+  --color-gold-500: #d8aa2b;
+  --color-gold-600: #ab8621;
+  --color-gold-700: #776022;
+  --color-gold-800: #51441f;
+  --color-gold-900: #372f1b;
+  --color-gold-950: #282315;
+
+  --animate-shine: shine 0.6s ease-in-out;
 
   --font-display: 'Inter', 'sans-serif';
   --font-sans: 'Inter', 'sans-serif';
 
   --default-transition-duration: 250ms;
+}
+
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) skewX(-20deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(200%) skewX(-20deg);
+    opacity: 1;
+  }
 }

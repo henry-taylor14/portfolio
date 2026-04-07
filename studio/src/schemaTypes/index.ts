@@ -3,6 +3,7 @@ import {page} from './documents/page'
 import {post} from './documents/post'
 import {callToAction} from './objects/callToAction'
 import {infoSection} from './objects/infoSection'
+import {timeline} from './objects/timeline'
 import {settings} from './singletons/settings'
 import {link} from './objects/link'
 import {blockContent} from './objects/blockContent'
@@ -20,5 +21,6 @@ export const schemaTypes = [
   blockContent,
   infoSection,
   callToAction,
+  timeline,
   link,
 ]
