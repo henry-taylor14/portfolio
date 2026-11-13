@@ -11,6 +11,7 @@ import {Toaster} from 'sonner'
 import DraftModeToast from '@/app/components/DraftModeToast'
 import Footer from '@/app/components/Footer'
 import Header from '@/app/components/Header'
+import Clappy from '@/app/components/Clappy'
 
 import {sanityFetch, SanityLive} from '@/sanity/lib/live'
 import {settingsQuery} from '@/sanity/lib/queries'
@@ -23,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
     // Metadata should never contain stega
     stega: false,
   })
-  const title = settings?.title || 'Herota Tech';
+  const title = settings?.title || 'Herota Tech'
   const description = settings?.description || [
     {
       _key: '9f1a629887fd',
@@ -36,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
           text: 'A portfolio for Henry Taylor',
         },
       ],
-    }
+    },
   ]
 
   const ogImage = resolveOpenGraphImage(settings?.ogImage)
@@ -71,7 +72,10 @@ export default async function RootLayout({children}: {children: React.ReactNode}
   const {isEnabled: isDraftMode} = await draftMode()
 
   return (
-    <html lang="en" className={`${inter.variable} bg-pink-500 text-black dark:bg-purple-950 dark:text-white`}>
+    <html
+      lang="en"
+      className={`${inter.variable} bg-pink-500 text-black dark:bg-purple-900 dark:text-white`}
+    >
       <body>
         <section className="min-h-screen pt-24">
           {/* The <Toaster> component is responsible for rendering toast notifications used in /app/client-utils.ts and /app/components/DraftModeToast.tsx */}
@@ -88,6 +92,7 @@ export default async function RootLayout({children}: {children: React.ReactNode}
           <Header />
           <main className="">{children}</main>
           <Footer />
+          <Clappy />
         </section>
         <SpeedInsights />
       </body>

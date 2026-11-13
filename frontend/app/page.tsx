@@ -22,9 +22,7 @@ export default async function Page() {
                   A showcase for
                 </div>
                 <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-black dark:text-gray-200">
-                  <div
-                    className="underline decoration-brand dark:decoration-pink-500 hover:text-[#6b4b6d] dark:hover:text-[#f9c2bc] underline-offset-8 hover:underline-offset-4 transition-all ease-out"
-                  >
+                  <div className="underline decoration-brand dark:decoration-pink-500 hover:text-purple-700 dark:hover:text-pink-500 underline-offset-8 hover:underline-offset-4 transition-all ease-out">
                     Henry Taylor.
                   </div>
                 </h1>
@@ -44,7 +42,7 @@ export default async function Page() {
           </div>
         </div>
       </div>
-      <div className="border-t border-gray-100 bg-gray-50 dark:bg-gray-700">
+      <div className="border-t border-gray-100 bg-gray-200 dark:bg-gray-700">
         <div className="container">
           <aside className="py-12 sm:py-20">
             <Suspense>{await AllPosts()}</Suspense>
