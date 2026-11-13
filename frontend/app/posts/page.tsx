@@ -65,10 +65,10 @@ export default async function PostsPage(props: Props) {
     <div className='relative min-h-screen'>
       <SidePattern side='left'/>
       <SidePattern side='right'/>
-      <div className="relative z-10 px-12 sm:px-24 lg:px-40">
+      <div className="relative z-10 sm:px-12 lg:px-24">
         <div className="container grid gap-12">
           <div className='mt-12 lg:mt-24'>
-            <div className="max-w-3xl flex flex-col gap-6">
+            <div className="max-w-5xl flex flex-col gap-6">
                 <Suspense>{await AllPosts()}</Suspense>
             </div>
           </div>

@@ -69,7 +69,7 @@ export default async function PostPage(props: Props) {
     <div className='relative min-h-screen'>
       <SidePattern side='left'/>
       <SidePattern side='right'/>
-      <div className="relative z-10 px-12 sm:px-24 lg:px-40">
+      <div className="relative z-10 sm:px-12 lg:px-24">
         <div className="container mb-12 lg:mb-24 grid gap-12">
           <div className='mt-12 lg:mt-24'>
             <div className="pb-6 grid gap-6 mb-6 border-b border-gray-100">

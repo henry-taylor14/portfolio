@@ -21,7 +21,7 @@ export default function Header() {
       <header className="fixed top-0 left-0 right-0 z-50 h-24 bg-purple-800 dark:bg-pink-600 backdrop-blur-lg flex items-center">
         <div className="container py-6 px-2 sm:px-6">
           <div className="flex items-center justify-between gap-5">
-            <Link className="flex items-center gap-2 m-2" href="/">
+            <Link className="flex items-center gap-2 m-2" href="/" aria-label="Herota Tech home">
               <span className="hidden sm:block">
                 <HerotaText />
               </span>
@@ -40,7 +40,7 @@ export default function Header() {
                 </li>
                 <li>
                   <Link href="/posts" className="rounded-full bg-black px-6 py-3 text-white">
-                    Latest Posts
+                    Projects
                   </Link>
                 </li>
               </ul>
@@ -83,7 +83,7 @@ export default function Header() {
       >
         {/* Menu Header */}
         <div className="flex items-center justify-between px-4 py-4 border-b border-white/20">
-          <Link href="/" onClick={() => setMobileMenuOpen(false)}>
+          <Link href="/" aria-label="Herota Tech home" onClick={() => setMobileMenuOpen(false)}>
             <HerotaIcon size={56} />
           </Link>
 
@@ -120,7 +120,7 @@ export default function Header() {
                 className="flex justify-center rounded-full bg-white text-black py-3 px-6"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Latest Posts
+                Projects
               </Link>
             </li>
           </ul>

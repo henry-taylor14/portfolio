@@ -16,12 +16,12 @@ export default function Footer() {
               Find me elsewhere.
             </li>
             <li className="mb-10 leading-tight tracking-tighter lg:mb-0 lg:pr-4 lg:text-left lg:text-2xl">
-              <Link href='https://www.linkedin.com/in/henry-taylor-4316861b7/'>
+              <Link href='https://www.linkedin.com/in/henry-taylor-4316861b7/' aria-label='Henry Taylor on LinkedIn'>
                 <LinkedInIcon className='w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-10 lg:h-10 text-black dark:text-gray-50 hover:opacity-70 duration-300 hover:scale-115 p-1 border-2 rounded-sm'/>
               </Link>
             </li>
             <li className="mb-10 leading-tight tracking-tighter lg:mb-0 lg:text-left lg:text-2xl">
-              <Link href='https://github.com/henry-taylor14/'>
+              <Link href='https://github.com/henry-taylor14/' aria-label='Henry Taylor on GitHub'>
                   <GitHubIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 dark:invert-0 invert transform-all hover:opacity-70 duration-300 hover:scale-115 p-1' />
               </Link>
             </li>
@@ -33,7 +33,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <span className="whitespace-nowrap">See the source code</span>
+              <span className="whitespace-nowrap">See how this site is built</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"

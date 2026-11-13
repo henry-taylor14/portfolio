@@ -42,9 +42,29 @@ export const post = defineType({
       type: 'text',
     }),
     defineField({
+      name: 'stack',
+      title: 'Stack',
+      description: 'Tools and languages used, e.g. Python, n8n, Next.js. Shown as tags on project cards.',
+      type: 'array',
+      of: [{type: 'string'}],
+      options: {layout: 'tags'},
+    }),
+    defineField({
       name: 'coverImage',
       title: 'Cover Image',
+      description: '1600 × 1000 px (16:10). Keep key content in the middle 80%.',
       type: 'image',
+      validation: (rule) => [
+        rule.required(),
+        rule
+          .custom((image: any) => {
+            const dims = image?.asset?._ref?.match(/-(\d+)x(\d+)-/)
+            if (!dims) return true
+            const ratio = Number(dims[1]) / Number(dims[2])
+            return Math.abs(ratio - 1.6) < 0.02 || 'Cover should be 16:10 (1600 × 1000 px) so it fits cards without cropping.'
+          })
+          .warning(),
+      ],
       options: {
         hotspot: true,
         aiAssist: {
@@ -68,7 +88,6 @@ export const post = defineType({
           },
         },
       ],
-      validation: (rule) => rule.required(),
     }),
     defineField({
       name: 'date',

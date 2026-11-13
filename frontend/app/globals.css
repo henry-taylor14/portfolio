@@ -9,6 +9,7 @@
   padding: 0 2rem;
 }
 
+/* ponytail: grays tinted toward brand plum (h330) so template neutrals sit inside the pink/plum world */
 @theme {
   --shadow-layer: 0 35px 60px -15px rgba(0, 0, 0, 0.3);
 
@@ -18,17 +19,17 @@
   --color-brand: #513952;
   --color-blue: #0052ff;
   --color-yellow: #cdea19;
-  --color-gray-50: #f6f6f8;
-  --color-gray-100: #eeeef1;
-  --color-gray-200: #e3e4e8;
-  --color-gray-300: #bbbdc9;
-  --color-gray-400: #9499ad;
-  --color-gray-500: #727892;
-  --color-gray-600: #515870;
-  --color-gray-700: #383d51;
-  --color-gray-800: #252837;
-  --color-gray-900: #1b1d27;
-  --color-gray-950: #13141b;
+  --color-gray-50: oklch(0.975 0.006 330);
+  --color-gray-100: oklch(0.955 0.009 330);
+  --color-gray-200: oklch(0.925 0.012 330);
+  --color-gray-300: oklch(0.83 0.02 330);
+  --color-gray-400: oklch(0.7 0.03 330);
+  --color-gray-500: oklch(0.57 0.035 330);
+  --color-gray-600: oklch(0.47 0.035 330);
+  --color-gray-700: oklch(0.37 0.035 330);
+  --color-gray-800: oklch(0.29 0.03 330);
+  --color-gray-900: oklch(0.23 0.025 330);
+  --color-gray-950: oklch(0.18 0.02 330);
   --color-purple-50: #faf7fb;
   --color-purple-100: #f2eaf4;
   --color-purple-200: #e5d6e8;
@@ -60,7 +61,10 @@
   --color-gold-400: #e1bb51;
   --color-gold-500: #d8aa2b;
   --color-gold-600: #ab8621;
+  --color-gold-650: #917321;
   --color-gold-700: #776022;
+
+  --color-rust: #8a443d;
   --color-gold-800: #51441f;
   --color-gold-900: #372f1b;
   --color-gold-950: #282315;
@@ -82,4 +86,18 @@
     transform: translateX(200%) skewX(-20deg);
     opacity: 1;
   }
+}
+
+::selection {
+  background: var(--color-pink-300);
+  color: var(--color-black);
+}
+@media (prefers-color-scheme: dark) {
+  ::selection {
+    background: var(--color-purple-600);
+    color: var(--color-white);
+  }
+}
+html {
+  caret-color: var(--color-purple-800);
 }
