@@ -11,6 +11,7 @@ import {Toaster} from 'sonner'
 import DraftModeToast from '@/app/components/DraftModeToast'
 import Footer from '@/app/components/Footer'
 import Header from '@/app/components/Header'
+import Clappy from '@/app/components/Clappy'
 
 import {sanityFetch, SanityLive} from '@/sanity/lib/live'
 import {settingsQuery} from '@/sanity/lib/queries'
@@ -91,6 +92,7 @@ export default async function RootLayout({children}: {children: React.ReactNode}
           <Header />
           <main className="">{children}</main>
           <Footer />
+          <Clappy />
         </section>
         <SpeedInsights />
       </body>

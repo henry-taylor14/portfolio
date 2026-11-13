@@ -2,16 +2,21 @@
 
 import {useState, useRef, useEffect} from 'react'
 import {usePathname} from 'next/navigation'
+import Link from 'next/link'
 import {AnimatePresence, motion} from 'framer-motion'
+import {scriptedReply} from './clappy-script'
 
 type Message = {
   role: 'user' | 'assistant'
   content: string
 }
 
-export type ClippyVariant = 'home' | 'blog' | 'post' | 'contact' | 'timeline' | 'about'
+// cloud: Groq via /api/clappy. offline: Groq failed, visitor chooses. backup: scripted Clappy (clappy-script.ts).
+type Brain = 'cloud' | 'offline' | 'backup'
 
-function getVariant(pathname: string): ClippyVariant {
+export type ClappyVariant = 'home' | 'blog' | 'post' | 'contact' | 'timeline' | 'about'
+
+function getVariant(pathname: string): ClappyVariant {
   if (pathname === '/') return 'home'
   if (pathname === '/posts') return 'blog'
   if (pathname.startsWith('/posts/')) return 'post'
@@ -22,11 +27,11 @@ function getVariant(pathname: string): ClippyVariant {
 
 const EASE = [0.33, 0, 1, 1] as [number, number, number, number]
 
-const ClippySVG = ({
+const ClappySVG = ({
   variant: _variant,
   collapsing = false,
 }: {
-  variant: ClippyVariant
+  variant: ClappyVariant
   collapsing?: boolean
 }) => (
   <svg
@@ -141,7 +146,7 @@ function TypingIndicator() {
   )
 }
 
-export default function Clippy() {
+export default function Clappy() {
   const pathname = usePathname()
   const variant = getVariant(pathname)
   const [open, setOpen] = useState(false)
@@ -151,17 +156,28 @@ export default function Clippy() {
   const [loading, setLoading] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const toggleRef = useRef<HTMLButtonElement>(null)
+  const abortRef = useRef<AbortController | null>(null)
+  const [brain, setBrain] = useState<Brain>('cloud')
+  const dialogRef = useRef<HTMLDialogElement>(null)
 
   function handleClose() {
     setCollapsed(true)
     setOpen(false)
+    toggleRef.current?.focus()
   }
 
+  useEffect(() => () => abortRef.current?.abort(), [])
+
   useEffect(() => {
-    if (window.matchMedia('(min-width: 1024px)').matches) {
-      setOpen(true)
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => {
+      // Esc inside the download warning closes only the warning (native <dialog> handles it).
+      if (e.key === 'Escape' && !dialogRef.current?.open) handleClose()
     }
-  }, [])
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open])
 
   useEffect(() => {
     if (open) {
@@ -175,6 +191,19 @@ export default function Clippy() {
     }
   }, [open])
 
+  function startBackupBrain() {
+    dialogRef.current?.close()
+    setBrain('backup')
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: 'assistant',
+        content: "📎 Backup Clappy reporting for duty! Ask me who Henry is, what he's built, or how to hire him.",
+      },
+    ])
+    setTimeout(() => inputRef.current?.focus(), 50)
+  }
+
   async function sendMessage() {
     const trimmed = input.trim()
     if (!trimmed || loading) return
@@ -185,18 +214,32 @@ export default function Clippy() {
     setInput('')
     setLoading(true)
 
+    if (brain === 'backup') {
+      setMessages((prev) => [...prev, {role: 'assistant', content: scriptedReply(trimmed, prev.length)}])
+      setLoading(false)
+      return
+    }
+
+    abortRef.current?.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
+
     try {
-      const res = await fetch('/api/clippy', {
+      const res = await fetch('/api/clappy', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({messages: updatedMessages, pathname}),
+        signal: controller.signal,
       })
 
       if (!res.ok) {
-        const errorText = await res.text().catch(() => 'Unknown error')
+        // Plain-text errors are written for visitors; JSON errors are internal and get a friendly fallback.
+        const isText = res.headers.get('content-type')?.startsWith('text/plain')
+        const errorText = isText ? await res.text().catch(() => '') : ''
+        if (res.status === 503) setBrain('offline')
         setMessages((prev) => [
           ...prev,
-          {role: 'assistant', content: errorText || 'Something went wrong. Try again!'},
+          {role: 'assistant', content: errorText || "📎 Something went sideways on my end. Try sending that again."},
         ])
         return
       }
@@ -215,7 +258,7 @@ export default function Clippy() {
       while (true) {
         const {value, done} = await reader.read()
         if (done) break
-        assistantContent += decoder.decode(value)
+        assistantContent += decoder.decode(value, {stream: true})
         setMessages((prev) => {
           const updated = [...prev]
           updated[updated.length - 1] = {role: 'assistant', content: assistantContent}
@@ -223,11 +266,13 @@ export default function Clippy() {
         })
       }
     } catch (error) {
+      if (controller.signal.aborted) return
+      setBrain('offline')
       setMessages((prev) => [
         ...prev,
         {
           role: 'assistant',
-          content: `📎 I tripped over a stack trace. ${error instanceof Error ? error.message : 'Unknown error'}`,
+          content: "📎 I couldn't reach my brain. Check your connection and try again.",
         },
       ])
     } finally {
@@ -252,13 +297,16 @@ export default function Clippy() {
             animate={{opacity: 1, y: 0, scale: 1}}
             exit={{opacity: 0, y: 20, scale: 0.95}}
             transition={{duration: 0.2, ease: 'easeOut'}}
+            id="clappy-panel"
+            role="dialog"
+            aria-label="Chat with Clappy"
             className="mb-3 w-[calc(100vw-1rem)] sm:w-96 max-h-[65vh] sm:max-h-[70vh] rounded-2xl shadow-2xl border border-purple-200 dark:border-purple-800 bg-white dark:bg-gray-700 flex flex-col relative"
           >
             {/* Close button */}
             <button
               onClick={handleClose}
-              aria-label="Close Clippy"
-              className="absolute -top-3 -right-3 w-7 h-7 rounded-full bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-gray-700 dark:hover:text-gray-200 transition-colors z-10 shadow-sm"
+              aria-label="Close chat"
+              className="absolute -top-3 -right-3 w-7 h-7 rounded-full after:absolute after:-inset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:focus-visible:outline-pink-300 bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-gray-700 dark:hover:text-gray-200 transition-colors z-10 shadow-sm"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -274,7 +322,7 @@ export default function Clippy() {
               {/* Empty state */}
               {messages.length === 0 && (
                 <div className="flex flex-col bg-purple-200 dark:bg-pink-300 items-center justify-center py-6 px-4">
-                  <p className="text-xs text-gray-500 dark:text-gray-600 font-mono text-center">
+                  <p className="text-xs text-purple-900 font-mono text-center">
                     It looks like you&apos;re browsing this website.
                     <br />I suppose I could help you...
                   </p>
@@ -283,14 +331,14 @@ export default function Clippy() {
 
               {/* Messages */}
               {messages.length > 0 && (
-                <div className="flex-1 overflow-y-auto px-4 py-3 space-y-1 min-h-0">
+                <div role="log" aria-live="polite" aria-busy={loading} className="flex-1 overflow-y-auto px-4 py-3 space-y-1 min-h-0">
                   {messages.map((msg, i) => (
                     <div
                       key={i}
                       className={`flex items-end gap-2 mb-3 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
                     >
                       <div
-                        className={`max-w-[85%] px-4 py-2 rounded-2xl text-sm whitespace-pre-wrap ${
+                        className={`max-w-[85%] px-4 py-2 rounded-2xl text-sm whitespace-pre-wrap [overflow-wrap:anywhere] ${
                           msg.role === 'user'
                             ? 'bg-purple-800 dark:bg-pink-500 text-white dark:text-purple-800 rounded-br-sm'
                             : 'bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100 rounded-bl-sm'
@@ -305,6 +353,28 @@ export default function Clippy() {
                 </div>
               )}
 
+              {/* Groq is down: offer the in-browser fallback or the contact page */}
+              {brain === 'offline' && (
+                <div className="border-t border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-950 px-4 py-3 space-y-2">
+                  <button
+                    type="button"
+                    onClick={() => dialogRef.current?.showModal()}
+                    className="w-full rounded-full bg-purple-800 px-4 py-2.5 text-sm font-mono text-white hover:bg-purple-700 dark:bg-pink-200 dark:text-purple-900 dark:hover:bg-pink-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:focus-visible:outline-pink-300"
+                  >
+                    🍪 Run Clappy with Cookies
+                  </button>
+                  <p className="text-xs text-center text-gray-700 dark:text-gray-200">
+                    Switches to a simpler backup Clappy. Nothing to download.
+                  </p>
+                  <Link
+                    href="/contact"
+                    className="block text-center text-sm font-mono underline decoration-brand dark:decoration-pink-300 underline-offset-4 py-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:focus-visible:outline-pink-300"
+                  >
+                    Contact Henry instead
+                  </Link>
+                </div>
+              )}
+
               {/* Input area */}
               <div className="px-3 py-3 border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-900">
                 <div className="flex gap-2 items-center">
@@ -314,15 +384,16 @@ export default function Clippy() {
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
                     placeholder="Ask me anything..."
+                    aria-label="Message Clappy"
                     maxLength={500}
                     disabled={loading}
-                    className="flex-1 text-base sm:text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-full px-4 py-2 outline-none focus:border-purple-400 dark:focus:border-purple-500 transition-colors placeholder-gray-400 disabled:opacity-50"
+                    className="flex-1 text-base sm:text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-full px-4 py-2 outline-none focus-visible:border-purple-600 focus-visible:ring-2 focus-visible:ring-purple-300 dark:focus-visible:border-pink-300 dark:focus-visible:ring-pink-300/40 transition-colors placeholder-gray-600 dark:placeholder-gray-300 disabled:opacity-50"
                   />
                   <button
                     onClick={sendMessage}
                     disabled={loading || !input.trim()}
                     aria-label="Send message"
-                    className="w-9 h-9 flex-shrink-0 rounded-full bg-purple-800 dark:bg-pink-200 text-white dark:text-purple-800 flex items-center justify-center hover:opacity-80 disabled:opacity-40 transition-opacity"
+                    className="w-11 h-11 flex-shrink-0 rounded-full bg-purple-800 dark:bg-pink-200 text-white dark:text-purple-800 flex items-center justify-center hover:opacity-80 disabled:opacity-40 transition-opacity focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:focus-visible:outline-pink-300"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -342,6 +413,7 @@ export default function Clippy() {
 
       {/* Toggle button */}
       <motion.button
+        ref={toggleRef}
         onClick={() => {
           if (collapsed) {
             setCollapsed(false)
@@ -354,11 +426,48 @@ export default function Clippy() {
         }}
         whileHover={collapsed ? undefined : {scale: 1.08}}
         whileTap={collapsed ? undefined : {scale: 0.95}}
-        aria-label={open ? 'Close Clippy' : 'Open Clippy'}
-        className="w-16 h-16 sm:w-20 sm:h-20 md:w-30 md:h-30 lg:w-36 lg:h-36 cursor-pointer focus:outline-none"
+        aria-label={open ? 'Hide Clappy chat' : 'Chat with Clappy'}
+        aria-expanded={open}
+        aria-controls="clappy-panel"
+        className="w-16 h-16 sm:w-20 sm:h-20 md:w-30 md:h-30 lg:w-36 lg:h-36 cursor-pointer rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:focus-visible:outline-pink-300"
       >
-        <ClippySVG variant={variant} collapsing={collapsed} />
+        <ClappySVG variant={variant} collapsing={collapsed} />
       </motion.button>
+
+      {/* Second approval before any download starts */}
+      <dialog
+        ref={dialogRef}
+        aria-labelledby="clappy-cookies-title"
+        className="m-auto max-w-sm rounded-2xl border border-purple-200 bg-white p-6 text-black shadow-2xl backdrop:bg-purple-950/60 dark:border-purple-800 dark:bg-purple-900 dark:text-white"
+      >
+        <h2 id="clappy-cookies-title" className="text-lg font-bold">
+          Before Clappy moves in
+        </h2>
+        <div className="mt-3 space-y-2 text-sm leading-6 text-gray-700 dark:text-gray-200">
+          <p>Clappy&apos;s usual AI brain is offline right now.</p>
+          <p>
+            Backup Clappy is scripted: it can tell you who Henry is, what he builds, and how to reach
+            him, but it can&apos;t hold a real conversation.
+          </p>
+          <p>No cookies are actually involved.</p>
+        </div>
+        <div className="mt-5 flex flex-wrap justify-end gap-3">
+          <button
+            type="button"
+            onClick={() => dialogRef.current?.close()}
+            className="rounded-full px-4 py-2 text-sm font-mono underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:focus-visible:outline-pink-300"
+          >
+            Not now
+          </button>
+          <button
+            type="button"
+            onClick={startBackupBrain}
+            className="rounded-full bg-purple-800 px-4 py-2 text-sm font-mono text-white hover:bg-purple-700 dark:bg-pink-200 dark:text-purple-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:focus-visible:outline-pink-300"
+          >
+            Run backup Clappy
+          </button>
+        </div>
+      </dialog>
     </div>
   )
 }
