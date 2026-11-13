@@ -3,7 +3,7 @@
 import {useState, useRef, useEffect} from 'react'
 import {usePathname} from 'next/navigation'
 import Link from 'next/link'
-import {AnimatePresence, motion} from 'framer-motion'
+import {AnimatePresence, motion, useReducedMotion} from 'framer-motion'
 import {scriptedReply} from './clappy-script'
 
 type Message = {
@@ -26,6 +26,30 @@ function getVariant(pathname: string): ClappyVariant {
 }
 
 const EASE = [0.33, 0, 1, 1] as [number, number, number, number]
+
+// One teaser line and two starter questions per page. Questions are ones Clappy can answer from real facts.
+const PAGE_COPY: Record<ClappyVariant, {teaser: string; prompts: [string, string]}> = {
+  home: {teaser: 'Hiring? I know where Henry keeps the good stuff.', prompts: ['What has Henry built?', 'How do I hire Henry?']},
+  blog: {teaser: 'Want a tour? Ask me which project fits.', prompts: ['Which project shows automation?', "What's Henry's stack?"]},
+  post: {teaser: 'Questions about this one? I read it. Twice.', prompts: ['What problem did this solve?', 'What does this show about Henry?']},
+  contact: {teaser: "Writer's block? I can help you draft this.", prompts: ['Help me write a hiring message', 'What should I include?']},
+  timeline: {teaser: 'I was there for all of it. Allegedly.', prompts: ['Who is Henry?', 'What does Henry work on?']},
+  about: {teaser: "I've known Henry for years. Mostly as a paperclip.", prompts: ['Who is Henry?', 'What does Henry work on?']},
+}
+
+// sessionStorage can throw (private mode, blocked storage); the teaser just shows again in that case.
+function seen(key: string) {
+  try {
+    return sessionStorage.getItem(key) === '1'
+  } catch {
+    return false
+  }
+}
+function markSeen(key: string) {
+  try {
+    sessionStorage.setItem(key, '1')
+  } catch {}
+}
 
 const ClappySVG = ({
   variant: _variant,
@@ -160,6 +184,41 @@ export default function Clappy() {
   const abortRef = useRef<AbortController | null>(null)
   const [brain, setBrain] = useState<Brain>('cloud')
   const dialogRef = useRef<HTMLDialogElement>(null)
+  const [teaser, setTeaser] = useState(false)
+  const reduceMotion = useReducedMotion()
+  const copy = PAGE_COPY[variant]
+
+  // Teaser: once per page per session, after 4s or once the visitor scrolls past the first screen.
+  useEffect(() => {
+    setTeaser(false)
+    const key = `clappy-teased:${pathname}`
+    if (open || seen('clappy-opened') || seen(key)) return
+    let shown = false
+    let hideTimer: ReturnType<typeof setTimeout>
+    const show = () => {
+      if (shown) return
+      shown = true
+      markSeen(key)
+      setTeaser(true)
+      hideTimer = setTimeout(() => setTeaser(false), 9000)
+    }
+    const timer = setTimeout(show, 4000)
+    const onScroll = () => window.scrollY > window.innerHeight * 0.6 && show()
+    window.addEventListener('scroll', onScroll, {passive: true})
+    return () => {
+      clearTimeout(timer)
+      clearTimeout(hideTimer)
+      window.removeEventListener('scroll', onScroll)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname])
+
+  function openChat() {
+    setTeaser(false)
+    setCollapsed(false)
+    setOpen(true)
+    markSeen('clappy-opened')
+  }
 
   function handleClose() {
     setCollapsed(true)
@@ -204,8 +263,8 @@ export default function Clappy() {
     setTimeout(() => inputRef.current?.focus(), 50)
   }
 
-  async function sendMessage() {
-    const trimmed = input.trim()
+  async function sendMessage(override?: string) {
+    const trimmed = (override ?? input).trim()
     if (!trimmed || loading) return
 
     const userMessage: Message = {role: 'user', content: trimmed}
@@ -326,6 +385,18 @@ export default function Clappy() {
                     It looks like you&apos;re browsing this website.
                     <br />I suppose I could help you...
                   </p>
+                  <div className="mt-4 flex flex-wrap justify-center gap-2">
+                    {copy.prompts.map((prompt) => (
+                      <button
+                        key={prompt}
+                        type="button"
+                        onClick={() => sendMessage(prompt)}
+                        className="rounded-full border border-purple-800/30 bg-white/70 px-3 py-1.5 text-xs text-purple-900 transition-colors hover:border-purple-800 hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800"
+                      >
+                        {prompt}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
 
@@ -390,7 +461,7 @@ export default function Clappy() {
                     className="flex-1 text-base sm:text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-full px-4 py-2 outline-none focus-visible:border-purple-600 focus-visible:ring-2 focus-visible:ring-purple-300 dark:focus-visible:border-pink-300 dark:focus-visible:ring-pink-300/40 transition-colors placeholder-gray-600 dark:placeholder-gray-300 disabled:opacity-50"
                   />
                   <button
-                    onClick={sendMessage}
+                    onClick={() => sendMessage()}
                     disabled={loading || !input.trim()}
                     aria-label="Send message"
                     className="w-11 h-11 flex-shrink-0 rounded-full bg-purple-800 dark:bg-pink-200 text-white dark:text-purple-800 flex items-center justify-center hover:opacity-80 disabled:opacity-40 transition-opacity focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:focus-visible:outline-pink-300"
@@ -411,19 +482,48 @@ export default function Clappy() {
         )}
       </AnimatePresence>
 
+      {/* Teaser bubble: page-specific nudge, never blocks anything */}
+      <AnimatePresence>
+        {teaser && !open && (
+          <motion.div
+            key="teaser"
+            initial={reduceMotion ? {opacity: 0} : {opacity: 0, y: 8, scale: 0.9}}
+            animate={{opacity: 1, y: 0, scale: 1}}
+            exit={{opacity: 0, transition: {duration: 0.15}}}
+            transition={{type: 'spring', stiffness: 420, damping: 26}}
+            style={{transformOrigin: 'bottom right'}}
+            className="relative mb-2 mr-4 max-w-[15rem] sm:mr-8"
+          >
+            <button
+              type="button"
+              onClick={openChat}
+              className="block rounded-2xl rounded-br-sm bg-purple-200 px-4 py-3 pr-8 text-left font-mono text-xs leading-5 text-purple-900 shadow-lg shadow-purple-950/15 dark:bg-pink-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800"
+            >
+              {copy.teaser}
+            </button>
+            <button
+              type="button"
+              onClick={() => setTeaser(false)}
+              aria-label="Dismiss Clappy's tip"
+              className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full text-purple-900/70 hover:bg-purple-900/10 hover:text-purple-900 after:absolute after:-inset-2 focus-visible:outline-2 focus-visible:outline-purple-800"
+            >
+              <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5" aria-hidden>
+                <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+              </svg>
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Toggle button */}
       <motion.button
         ref={toggleRef}
         onClick={() => {
-          if (collapsed) {
-            setCollapsed(false)
-            setOpen(true)
-          } else if (open) {
-            handleClose()
-          } else {
-            setOpen(true)
-          }
+          if (open) handleClose()
+          else openChat()
         }}
+        animate={teaser && !reduceMotion ? {rotate: [0, -10, 8, -4, 0]} : {rotate: 0}}
+        transition={{duration: 0.7, ease: 'easeOut'}}
         whileHover={collapsed ? undefined : {scale: 1.08}}
         whileTap={collapsed ? undefined : {scale: 0.95}}
         aria-label={open ? 'Hide Clappy chat' : 'Chat with Clappy'}

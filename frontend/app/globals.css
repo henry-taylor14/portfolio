@@ -71,8 +71,9 @@
 
   --animate-shine: shine 0.6s ease-in-out;
 
-  --font-display: 'Inter', 'sans-serif';
-  --font-sans: 'Inter', 'sans-serif';
+  /* next/font registers Inter under a hashed family name exposed as --font-inter. */
+  --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
   --default-transition-duration: 250ms;
 }
@@ -100,4 +101,13 @@
 }
 html {
   caret-color: var(--color-purple-800);
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+p {
+  text-wrap: pretty;
 }

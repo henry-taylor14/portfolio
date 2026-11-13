@@ -20,7 +20,7 @@ export default async function Page() {
             <div className="relative mx-auto max-w-2xl pt-12 pb-20 sm:pb-28 xl:pt-16 lg:max-w-4xl lg:px-12 flex flex-col items-center justify-center">
               <div className="flex flex-col gap-6 items-center">
                 <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-gold-650 dark:text-white">
-                  <div className="underline decoration-brand dark:decoration-gold-300 hover:text-purple-700 dark:hover:text-pink-200 underline-offset-8 hover:underline-offset-4 transition-all ease-out">
+                  <div className="underline decoration-brand dark:decoration-gold-300 underline-offset-8">
                     Henry Taylor.
                   </div>
                 </h1>

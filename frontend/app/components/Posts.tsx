@@ -65,17 +65,22 @@ const Posts = ({
   children,
   heading,
   subHeading,
+  pageTitle = false,
 }: {
   children: React.ReactNode
   heading?: string
   subHeading?: string
+  pageTitle?: boolean
 }) => (
   <div>
-    {heading && (
-      <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-200 sm:text-4xl lg:text-5xl">
-        {heading}
-      </h2>
-    )}
+    {heading &&
+      (pageTitle ? (
+        <h1 className="text-4xl font-bold tracking-tight text-balance text-gray-900 dark:text-gray-100 sm:text-5xl lg:text-7xl">{heading}</h1>
+      ) : (
+        <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-200 sm:text-4xl lg:text-5xl">
+          {heading}
+        </h2>
+      ))}
     {subHeading && <p className="mt-2 text-lg leading-8 text-gray-600 dark:text-gray-300">{subHeading}</p>}
     <div className="@container mt-8">
       <div className="grid gap-6 @3xl:grid-cols-2">{children}</div>
@@ -102,7 +107,7 @@ export const MorePosts = async ({skip, limit}: {skip: string; limit: number}) =>
   )
 }
 
-export const AllPosts = async () => {
+export const AllPosts = async ({pageTitle = false}: {pageTitle?: boolean} = {}) => {
   const {data} = await sanityFetch({query: allPostsQuery})
 
   if (!data || data.length === 0) {
@@ -113,6 +118,7 @@ export const AllPosts = async () => {
     <Posts
       heading="Projects"
       subHeading="What I've built lately."
+      pageTitle={pageTitle}
     >
       {data.map((post: any, i: number) => (
         <Post key={post._id} post={post} featured={i === 0} />

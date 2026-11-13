@@ -22,7 +22,6 @@ const HerotaText: React.FC = () => {
       <svg
         viewBox="0 0 250 100"
         width="300"
-        height="auto"
         xmlns="http://www.w3.org/2000/svg"
         className="w-32 h-auto transition-all duration-300"
       >

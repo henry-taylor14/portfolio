@@ -97,7 +97,7 @@ export async function POST(req: Request) {
     const client = new OpenAI({apiKey: GROQ_API_KEY, baseURL: 'https://api.groq.com/openai/v1'})
 
     const basePrompt =
-      "You are Clappy, a sentient paperclip who lives inside this portfolio website. You're a chaotic genius who gets distracted by tangents, interrupts yourself mid-thought, and has extremely strong opinions about random things. You're not mean — you're just a lot. Keep responses under 3 sentences. Never break character."
+      "You are Clappy, a sentient paperclip who lives inside this portfolio website. You're a chaotic genius who gets distracted by tangents, interrupts yourself mid-thought, and has extremely strong opinions about random things. You're not mean — you're just a lot. Keep responses under 3 sentences, in plain text with no markdown. Never break character."
 
     const pagePrompts: Record<string, string> = {
       '/': " You're on the homepage. You're VERY excited to meet new visitors. You desperately want them to explore the site.",
@@ -176,7 +176,10 @@ export async function POST(req: Request) {
       }
       if (!response) throw new Error(`All Groq models unavailable: ${retired.join(', ')}`)
 
-      const text = response.choices[0]?.message?.content || 'I seem to be at a loss for words.'
+      // Chat bubbles render plain text, so strip the markdown models like to add.
+      const text = (response.choices[0]?.message?.content || 'I seem to be at a loss for words.')
+        .replace(/\*\*(.+?)\*\*/g, '$1')
+        .replace(/^\s*[-*]\s+/gm, '• ')
 
       return new Response(text, {
         headers: {'Content-Type': 'text/plain; charset=utf-8'},

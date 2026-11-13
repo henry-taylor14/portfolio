@@ -69,7 +69,7 @@ export default async function PostsPage(props: Props) {
         <div className="container grid gap-12">
           <div className='mt-12 lg:mt-24'>
             <div className="max-w-5xl flex flex-col gap-6">
-                <Suspense>{await AllPosts()}</Suspense>
+                <Suspense>{await AllPosts({pageTitle: true})}</Suspense>
             </div>
           </div>
         </div>
