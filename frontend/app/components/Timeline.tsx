@@ -8,7 +8,6 @@ import {
   useScroll,
   useSpring,
   useTransform,
-  type MotionValue,
 } from 'framer-motion'
 
 type TimelineItem = {
@@ -30,23 +29,13 @@ type TimelineProps = {
   index: number
 }
 
-const EASE = [0.25, 0.1, 0.25, 1] as const
-
-function TimelineEntry({
-  item,
-  index,
-  progress,
-}: {
-  item: TimelineItem
-  index: number
-  progress: MotionValue<number>
-}) {
+function TimelineEntry({item, index}: {item: TimelineItem; index: number}) {
   const ref = useRef<HTMLDivElement>(null)
   const reduceMotion = useReducedMotion()
   // Active once the entry's top crosses viewport center, where the line's tip sits
   const isActive = useInView(ref, {margin: '0px 0px -50% 0px'})
-  // Parallax drift: cards float upward as the section scrolls past
-  const y = useTransform(progress, [0, 1], [20, -20])
+  // Card shown while it's at least 100px inside the viewport; fades back out when it leaves
+  const isVisible = useInView(ref, {margin: '-100px 0px'})
 
   const date = [item.month, item.year].filter(Boolean).join(' ')
   const isRight = index % 2 === 1
@@ -74,16 +63,14 @@ function TimelineEntry({
         transition={{duration: 0.8, repeat: Infinity, repeatDelay: 4, ease: 'easeInOut'}}
       />
 
-      <motion.div
-        style={reduceMotion ? undefined : {y}}
-        className={`pl-12 md:pl-0 ${isRight ? 'md:col-start-2' : ''}`}
-      >
-        <motion.div
-          initial={reduceMotion ? false : {opacity: 0, y: 20}}
-          whileInView={{opacity: 1, y: 0}}
-          viewport={{once: false, margin: '-100px'}}
-          transition={{duration: 0.7, ease: EASE}}
-          className="rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 px-5 py-4 shadow-sm"
+      {/* ponytail: card reveal is a CSS transition toggled by class, not framer, and there is no parallax.
+          Per-frame style writes on elements holding Sanity text make the visual-editing overlay
+          re-parse every frame (max update depth / jank in Presentation). Keep JS-driven motion off the card. */}
+      <div className={`pl-12 md:pl-0 ${isRight ? 'md:col-start-2' : ''}`}>
+        <div
+          className={`rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 px-5 py-4 shadow-sm transition-[opacity,translate] duration-700 ease-[cubic-bezier(0.25,0.1,0.25,1)] motion-reduce:transition-none ${
+            isVisible || reduceMotion ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
+          }`}
         >
           {date && (
             <span className="inline-block mb-2 font-mono text-xs font-semibold px-2.5 py-1 rounded-full bg-purple-800 text-white dark:bg-gold-400 dark:text-purple-800">
@@ -101,8 +88,8 @@ function TimelineEntry({
               {item.description}
             </p>
           )}
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </div>
   )
 }
@@ -152,7 +139,7 @@ export default function Timeline({block}: TimelineProps) {
 
           <div className="relative z-20">
             {block.items.map((item, i) => (
-              <TimelineEntry key={item._key} item={item} index={i} progress={progress} />
+              <TimelineEntry key={item._key} item={item} index={i} />
             ))}
           </div>
         </div>
