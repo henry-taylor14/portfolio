@@ -6,7 +6,7 @@ import SidePattern from "../components/SidePattern";
 const TOPICS = ["Hiring", "Project inquiry", "Just saying hi"] as const;
 
 const field =
-  "mt-2 block w-full rounded-lg border border-purple-300 bg-white px-4 py-3 text-base text-black placeholder:text-purple-600 transition-colors focus-visible:border-purple-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:border-purple-700 dark:bg-purple-950 dark:text-white dark:placeholder:text-pink-200 dark:focus-visible:border-pink-300 dark:focus-visible:outline-pink-300";
+  "mt-2 block w-full rounded-lg border border-purple-300 bg-white px-4 py-3 text-base text-black placeholder:text-purple-600 transition-colors focus-visible:border-purple-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:border-purple-700 dark:bg-purple-950 dark:text-white dark:placeholder:text-gold-200 dark:focus-visible:border-gold-300 dark:focus-visible:outline-gold-300";
 const label = "block font-mono text-sm text-gray-800 dark:text-gray-100";
 
 export default function ContactPage() {
@@ -73,7 +73,7 @@ export default function ContactPage() {
               {TOPICS.map((topic, i) => (
                 <label key={topic} className="cursor-pointer">
                   <input type="radio" name="topic" value={topic} defaultChecked={i === 0} className="peer sr-only" />
-                  <span className="inline-block rounded-full border border-purple-300 bg-white px-4 py-2 font-mono text-sm text-purple-900 transition-colors hover:border-purple-800 peer-checked:border-purple-800 peer-checked:bg-purple-800 peer-checked:text-white peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-purple-800 dark:border-purple-700 dark:bg-purple-950 dark:text-pink-100 dark:peer-checked:border-pink-200 dark:peer-checked:bg-pink-200 dark:peer-checked:text-purple-950 dark:peer-focus-visible:outline-pink-300">
+                  <span className="inline-block rounded-full border border-purple-300 bg-white px-4 py-2 font-mono text-sm text-purple-900 transition-colors hover:border-purple-800 peer-checked:border-purple-800 peer-checked:bg-purple-800 peer-checked:text-white peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-purple-800 dark:border-purple-700 dark:bg-purple-950 dark:text-gold-100 dark:peer-checked:border-gold-200 dark:peer-checked:bg-gold-200 dark:peer-checked:text-purple-950 dark:peer-focus-visible:outline-gold-300">
                     {topic}
                   </span>
                 </label>
@@ -110,7 +110,7 @@ export default function ContactPage() {
 
           <button
             type="submit"
-            className="rounded-full bg-black px-6 py-3 font-mono text-white transition-opacity hover:opacity-85 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple-800 dark:focus-visible:outline-pink-300"
+            className="rounded-full bg-black px-6 py-3 font-mono text-white transition-opacity hover:opacity-85 disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple-800 dark:focus-visible:outline-gold-300"
             disabled={status === "sending"}
           >
             {status === "sending" ? "Sending…" : "Send message"}
@@ -118,12 +118,12 @@ export default function ContactPage() {
 
           <div role="status" aria-live="polite">
             {status === "success" && (
-              <p className="rounded-lg border border-purple-300 bg-white px-4 py-3 text-purple-950 dark:border-purple-700 dark:bg-purple-950 dark:text-pink-50">
+              <p className="rounded-lg border border-purple-300 bg-white px-4 py-3 text-purple-950 dark:border-purple-700 dark:bg-purple-950 dark:text-gold-50">
                 Message sent. Thanks! Henry will get back to you soon.
               </p>
             )}
             {status === "error" && (
-              <p className="rounded-lg border border-rust bg-white px-4 py-3 text-rust dark:border-pink-300 dark:bg-purple-950 dark:text-pink-200">
+              <p className="rounded-lg border border-rust bg-white px-4 py-3 text-rust dark:border-gold-300 dark:bg-purple-950 dark:text-gold-200">
                 {errorMsg}
               </p>
             )}

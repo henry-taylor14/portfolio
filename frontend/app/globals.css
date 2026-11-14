@@ -78,6 +78,32 @@
   --default-transition-duration: 250ms;
 }
 
+/* ponytail: dark mode retunes the token values instead of rewriting every dark: class.
+   Grays → cool charcoal scale anchored on #F4F5F7 / #9AA0A6 / #3A3A40,
+   deep purples → plum palette (#2A0F24 base, #4F1C44 surface). Gold is the dark accent (dark:*gold-* classes).
+   Only affects what renders in dark mode; light mode keeps the @theme values above. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-gray-50: #f9f9fa;
+    --color-gray-100: #f4f5f7;
+    --color-gray-200: #e3e5e8;
+    --color-gray-300: #c2c6cb;
+    --color-gray-400: #9aa0a6;
+    --color-gray-500: #767b82;
+    --color-gray-600: #55585f;
+    --color-gray-700: #3a3a40;
+    --color-gray-800: #2c2c31;
+    --color-gray-900: #1f1f23;
+    --color-gray-950: #141417;
+
+    --color-purple-600: #874078;
+    --color-purple-700: #6a2a5c;
+    --color-purple-800: #4f1c44;
+    --color-purple-900: #2a0f24;
+    --color-purple-950: #210b1c;
+  }
+}
+
 @keyframes shine {
   0% {
     transform: translateX(-100%) skewX(-20deg);

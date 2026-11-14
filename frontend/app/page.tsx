@@ -15,12 +15,12 @@ export default async function Page() {
     <>
       <div className="relative bg-pink-500 dark:bg-purple-900">
         <div className="relative bg-[url(/images/tile-1-black.png)] bg-size-[5px]">
-          <div className="bg-gradient-to-b from-purple-200 dark:from-rust w-full h-full absolute top-0"></div>
+          <div className="bg-gradient-to-b from-purple-200 dark:from-gray-600 w-full h-full absolute top-0"></div>
           <div className="container">
             <div className="relative mx-auto max-w-2xl pt-12 pb-20 sm:pb-28 xl:pt-16 lg:max-w-4xl lg:px-12 flex flex-col items-center justify-center">
               <div className="flex flex-col gap-6 items-center">
                 <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-gold-650 dark:text-white">
-                  <div className="underline decoration-brand dark:decoration-gold-300 underline-offset-8">
+                  <div className="underline decoration-brand dark:decoration-gold-300 hover:text-purple-700 dark:hover:text-pink-200 underline-offset-8 hover:underline-offset-4 transition-all ease-out">
                     Henry Taylor.
                   </div>
                 </h1>
@@ -40,13 +40,13 @@ export default async function Page() {
             <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
               <Link
                 href="#projects"
-                className="rounded-full bg-black px-6 py-3 text-white font-mono focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple-800 dark:focus-visible:outline-pink-500"
+                className="rounded-full bg-black px-6 py-3 text-white font-mono focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple-800 dark:focus-visible:outline-gold-400"
               >
                 See projects
               </Link>
               <Link
                 href="/contact"
-                className="py-3 font-mono underline decoration-brand dark:decoration-pink-500 decoration-2 underline-offset-8 hover:underline-offset-4 transition-all ease-out focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple-800 dark:focus-visible:outline-pink-500"
+                className="py-3 font-mono underline decoration-brand dark:decoration-gold-400 decoration-2 underline-offset-8 hover:underline-offset-4 transition-all ease-out focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-purple-800 dark:focus-visible:outline-gold-400"
               >
                 Get in touch
               </Link>

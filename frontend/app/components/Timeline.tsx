@@ -1,7 +1,15 @@
 'use client'
 
 import {useRef} from 'react'
-import {motion, useInView, useReducedMotion, useScroll, useSpring} from 'framer-motion'
+import {
+  motion,
+  useInView,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+  type MotionValue,
+} from 'framer-motion'
 
 type TimelineItem = {
   _key: string
@@ -22,37 +30,63 @@ type TimelineProps = {
   index: number
 }
 
-function TimelineEntry({item, index}: {item: TimelineItem; index: number}) {
+const EASE = [0.25, 0.1, 0.25, 1] as const
+
+function TimelineEntry({
+  item,
+  index,
+  progress,
+}: {
+  item: TimelineItem
+  index: number
+  progress: MotionValue<number>
+}) {
   const ref = useRef<HTMLDivElement>(null)
   const reduceMotion = useReducedMotion()
-  // Dot lights up when entry crosses viewport middle (roughly where the progress line is)
+  // Active once the entry's top crosses viewport center, where the line's tip sits
   const isActive = useInView(ref, {margin: '0px 0px -50% 0px'})
-  const isInView = useInView(ref, {once: true, margin: '0px 0px -80px 0px'})
+  // Parallax drift: cards float upward as the section scrolls past
+  const y = useTransform(progress, [0, 1], [20, -20])
 
   const date = [item.month, item.year].filter(Boolean).join(' ')
   const isRight = index % 2 === 1
-  const x = reduceMotion ? 0 : isRight ? 40 : -40
+  const active = isActive || reduceMotion
 
   return (
-    <div ref={ref} className="relative pb-12 last:pb-0 md:grid md:grid-cols-2 md:gap-16">
-      {/* Dot on the line */}
-      <span
-        className={`absolute left-4 md:left-1/2 top-5 -translate-x-1/2 w-3.5 h-3.5 rounded-full ring-4 ring-white dark:ring-gray-900 z-10 transition-colors duration-300 ${
-          isActive || reduceMotion
-            ? 'bg-purple-800 dark:bg-pink-500'
-            : 'bg-gray-300 dark:bg-gray-600'
+    <div ref={ref} className="relative mb-16 last:mb-0 md:grid md:grid-cols-2 md:gap-20 md:items-center">
+      {/* Dot on the line, pulses once reached */}
+      <motion.span
+        className={`absolute left-4 md:left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-30 w-5 h-5 rounded-full border-4 bg-white dark:bg-gray-900 transition-colors duration-300 ${
+          active ? 'border-purple-800 dark:border-gold-400' : 'border-gray-300 dark:border-gray-600'
         }`}
+        animate={
+          active && !reduceMotion
+            ? {
+                scale: [1, 1.3, 1],
+                boxShadow: [
+                  '0 0 0px rgba(249,194,188,0)',
+                  '0 0 12px rgba(249,194,188,0.6)',
+                  '0 0 0px rgba(249,194,188,0)',
+                ],
+              }
+            : {}
+        }
+        transition={{duration: 0.8, repeat: Infinity, repeatDelay: 4, ease: 'easeInOut'}}
       />
 
       <motion.div
-        initial={{opacity: 0, x}}
-        animate={isInView ? {opacity: 1, x: 0} : {opacity: 0, x}}
-        transition={{duration: 0.5, ease: 'easeOut'}}
-        className={`pl-12 md:pl-0 ${isRight ? 'md:col-start-2' : 'md:text-right'}`}
+        style={reduceMotion ? undefined : {y}}
+        className={`pl-12 md:pl-0 ${isRight ? 'md:col-start-2' : ''}`}
       >
-        <div className="rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 px-5 py-4 shadow-sm">
+        <motion.div
+          initial={reduceMotion ? false : {opacity: 0, y: 20}}
+          whileInView={{opacity: 1, y: 0}}
+          viewport={{once: false, margin: '-100px'}}
+          transition={{duration: 0.7, ease: EASE}}
+          className="rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 px-5 py-4 shadow-sm"
+        >
           {date && (
-            <span className="inline-block mb-2 font-mono text-xs font-semibold px-2.5 py-1 rounded-full bg-purple-800 text-white dark:bg-pink-500 dark:text-purple-800">
+            <span className="inline-block mb-2 font-mono text-xs font-semibold px-2.5 py-1 rounded-full bg-purple-800 text-white dark:bg-gold-400 dark:text-purple-800">
               {date}
             </span>
           )}
@@ -60,16 +94,14 @@ function TimelineEntry({item, index}: {item: TimelineItem; index: number}) {
             <h3 className="text-base font-bold text-gray-900 dark:text-gray-100">{item.title}</h3>
           )}
           {item.subtitle && (
-            <p className="text-sm font-medium text-purple-700 dark:text-pink-300">
-              {item.subtitle}
-            </p>
+            <p className="text-sm font-medium text-purple-700 dark:text-gold-300">{item.subtitle}</p>
           )}
           {item.description && (
             <p className="mt-1.5 text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
               {item.description}
             </p>
           )}
-        </div>
+        </motion.div>
       </motion.div>
     </div>
   )
@@ -78,31 +110,51 @@ function TimelineEntry({item, index}: {item: TimelineItem; index: number}) {
 export default function Timeline({block}: TimelineProps) {
   const trackRef = useRef<HTMLDivElement>(null)
   const reduceMotion = useReducedMotion()
-  const {scrollYProgress} = useScroll({target: trackRef, offset: ['start 70%', 'end 50%']})
-  const scaleY = useSpring(scrollYProgress, {stiffness: 120, damping: 30, restDelta: 0.001})
+  // ponytail: 'center' offsets (Lightswind uses start/end of viewport) so line tip tracks viewport middle for a mid-page section
+  const {scrollYProgress} = useScroll({target: trackRef, offset: ['start center', 'end center']})
+  const progress = useSpring(scrollYProgress, {stiffness: 100, damping: 30, restDelta: 0.001})
+  const height = useTransform(progress, [0, 1], ['0%', '100%'])
 
   if (!block.items || block.items.length === 0) return null
 
   return (
-    <div className="container my-12">
+    <div className="container my-12 overflow-x-clip">
       <div className="max-w-5xl mx-auto">
         {block.heading && (
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-12 md:text-center">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-16 md:text-center">
             {block.heading}
           </h2>
         )}
 
-        <div ref={trackRef} className="relative">
-          {/* Track + scroll-driven progress fill */}
-          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 -translate-x-1/2 bg-gray-200 dark:bg-gray-700" />
+        <div ref={trackRef} className="relative py-4">
+          {/* Static track */}
+          <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 -translate-x-1/2 rounded-full bg-gray-200 dark:bg-gray-700" />
+
+          {/* Scroll-driven gradient fill */}
           <motion.div
-            style={{scaleY: reduceMotion ? 1 : scaleY}}
-            className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 -translate-x-1/2 origin-top bg-purple-800 dark:bg-pink-500"
+            style={{height: reduceMotion ? '100%' : height}}
+            className="absolute left-4 md:left-1/2 top-0 z-10 w-0.5 -translate-x-1/2 rounded-full bg-gradient-to-b from-purple-800 via-purple-500 to-pink-500 shadow-[0_0_15px_rgba(166,130,170,0.5),0_0_25px_rgba(249,194,188,0.3)] dark:from-purple-600 dark:via-gold-600 dark:to-gold-300 dark:shadow-[0_0_15px_rgba(216,170,43,0.45),0_0_25px_rgba(225,187,81,0.25)]"
           />
 
-          {block.items.map((item, i) => (
-            <TimelineEntry key={item._key} item={item} index={i} />
-          ))}
+          {/* Glowing comet riding the line's tip */}
+          {!reduceMotion && (
+            <motion.div
+              style={{top: height}}
+              className="absolute left-4 md:left-1/2 z-20 -translate-x-1/2 -translate-y-1/2"
+            >
+              <motion.div
+                className="w-5 h-5 rounded-full bg-[radial-gradient(circle,rgba(249,194,188,0.85)_0%,rgba(166,130,170,0.5)_40%,transparent_70%)] shadow-[0_0_15px_4px_rgba(249,194,188,0.55),0_0_25px_8px_rgba(166,130,170,0.4),0_0_40px_15px_rgba(81,57,82,0.2)] dark:bg-[radial-gradient(circle,rgba(225,187,81,0.9)_0%,rgba(216,170,43,0.5)_40%,transparent_70%)] dark:shadow-[0_0_15px_4px_rgba(225,187,81,0.55),0_0_25px_8px_rgba(216,170,43,0.35),0_0_40px_15px_rgba(79,28,68,0.3)]"
+                animate={{scale: [1, 1.3, 1]}}
+                transition={{duration: 2, repeat: Infinity, ease: 'easeInOut'}}
+              />
+            </motion.div>
+          )}
+
+          <div className="relative z-20">
+            {block.items.map((item, i) => (
+              <TimelineEntry key={item._key} item={item} index={i} progress={progress} />
+            ))}
+          </div>
         </div>
       </div>
     </div>

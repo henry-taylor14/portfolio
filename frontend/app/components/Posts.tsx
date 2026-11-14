@@ -44,7 +44,7 @@ const Post = ({post, featured = false}: {post: AllPostsQueryResult[number]; feat
           {stack && stack.length > 0 ? (
             <ul className="flex flex-wrap gap-2 font-mono text-xs" aria-label="Stack">
               {stack.map((tool) => (
-                <li key={tool} className="bg-pink-100 px-2 py-1 text-purple-900 dark:bg-purple-800 dark:text-pink-100">
+                <li key={tool} className="bg-pink-100 px-2 py-1 text-purple-900 dark:bg-purple-800 dark:text-gold-100">
                   {tool}
                 </li>
               ))}

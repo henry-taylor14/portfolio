@@ -9,6 +9,18 @@ const WIRE = 'rgb(100,110,125)'
 const WIRE_LIGHT = 'rgb(200,208,218)'
 const PUPIL = 'rgb(44,86,162)'
 
+// Fall: each part drops off on its own path (original pre-93ed82d values), clipped to Clappy's box.
+const EASE = [0.33, 0, 1, 1] as const
+const DROP = {
+  body: {y: 800, x: -50, rotate: -90, rotateY: 85, duration: 0.7, delay: 0},
+  leftWhite: {y: 900, x: -150, rotate: -35, duration: 0.6, delay: 0.05},
+  leftPupil: {y: 850, x: -200, rotate: -50, duration: 0.55, delay: 0.08},
+  rightWhite: {y: 950, x: 120, rotate: 30, duration: 0.65, delay: 0.03},
+  rightPupil: {y: 880, x: 180, rotate: 45, duration: 0.6, delay: 0.07},
+  mouth: {y: 700, x: 30, rotate: 10, duration: 0.5, delay: 0.1},
+}
+type Part = keyof typeof DROP
+
 export default function ClappyFigure({
   fallen,
   mood,
@@ -36,20 +48,37 @@ export default function ClappyFigure({
       ? {x: -12, y: -32, transition: {duration: 0.3}}
       : {x: 0, y: 0, transition: {duration: 0.3}}
 
-  const eye = (white: string, pupil: string, clip: string) => (
+  const drop = (part: Part, children: React.ReactNode) => {
+    const {duration, delay, ...to} = DROP[part]
+    return (
+      <motion.g
+        initial={false}
+        animate={fallen ? to : {x: 0, y: 0, rotate: 0, rotateY: 0}}
+        transition={reduceMotion ? {duration: 0} : {duration, delay, ease: EASE}}
+      >
+        {children}
+      </motion.g>
+    )
+  }
+
+  const eye = (white: string, pupil: string, clip: string, whitePart: Part, pupilPart: Part) => (
     <motion.g
       style={{transformBox: 'fill-box', originY: 0.5}}
       animate={{scaleY: blink && !fallen ? 0.08 : 1}}
       transition={{duration: 0.07}}
     >
-      <path fill={WIRE_LIGHT} d={white} />
-      <g clipPath={`url(#${clip})`}>
-        <motion.g style={{x: pupilX, y: pupilY}}>
-          <motion.g animate={gaze}>
-            <path fill={PUPIL} d={pupil} />
+      {drop(whitePart, <path fill={WIRE_LIGHT} d={white} />)}
+      {/* Clip travels with the pupil as it drops */}
+      {drop(
+        pupilPart,
+        <g clipPath={`url(#${clip})`}>
+          <motion.g style={{x: pupilX, y: pupilY}}>
+            <motion.g animate={gaze}>
+              <path fill={PUPIL} d={pupil} />
+            </motion.g>
           </motion.g>
-        </motion.g>
-      </g>
+        </g>,
+      )}
     </motion.g>
   )
 
@@ -62,41 +91,28 @@ export default function ClappyFigure({
         <clipPath id="clappy-eye-r">
           <path d={P.rightWhite} />
         </clipPath>
+        <clipPath id="clappy-box">
+          <rect width={2048} height={2150} />
+        </clipPath>
         <radialGradient id="clappy-glow">
           <stop offset="0%" stopColor="#f2e1b0" stopOpacity="0.9" />
           <stop offset="100%" stopColor="#f2e1b0" stopOpacity="0" />
         </radialGradient>
       </defs>
 
-      {/* Ground shadow stretches when Clappy is lying down */}
-      <motion.ellipse
-        cy={1980}
-        ry={35}
-        fill="rgba(0,0,0,0.18)"
-        initial={false}
-        animate={{cx: fallen ? 1050 : 974, rx: fallen ? 820 : 550}}
-        transition={fallen && loop ? {duration: 0.4, delay: 0.45} : {duration: 0.3}}
-      />
+      <ellipse cx={974} cy={1980} rx={550} ry={35} fill="rgba(0,0,0,0.18)" />
 
-      {/* Fall: tips over from the base, accelerates like gravity, bounces once, settles. */}
-      <motion.g
-        style={{transformBox: 'fill-box', originX: 0.55, originY: 1}}
-        initial={false}
-        animate={fallen ? {rotate: [0, 4, -90, -80, -90], x: [0, 0, 700, 700, 700], y: [0, 0, -380, -380, -380]} : {rotate: 0, x: 0, y: 0}}
-        transition={
-          fallen
-            ? loop
-              ? {duration: 1, times: [0, 0.12, 0.62, 0.8, 1], ease: ['easeOut', 'easeIn', 'easeOut', 'easeIn']}
-              : {duration: 0}
-            : {type: 'spring', stiffness: 260, damping: 18}
-        }
-      >
+      {/* Falling parts vanish at Clappy's edge (svg overflow is visible for the bulb) */}
+      <g clipPath="url(#clappy-box)">
         {/* Thinking sway */}
         <motion.g
           style={{transformBox: 'fill-box', originX: 0.55, originY: 1}}
           animate={thinking && loop ? {rotate: [-2.5, 2.5]} : {rotate: 0}}
           transition={thinking && loop ? {duration: 1.4, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut'} : {duration: 0.3}}
         >
+          {drop(
+            'body',
+            <>
           <path fill={WIRE} d={P.body} />
           <path fill={WIRE_LIGHT} d={P.bodyLight} />
 
@@ -120,12 +136,14 @@ export default function ClappyFigure({
             <path d="M 1290 1240 C 1530 1150 1570 860 1420 640" fill="none" stroke={WIRE} strokeWidth={48} strokeLinecap="round" />
             <path d="M 1300 1225 C 1505 1145 1540 870 1410 655" fill="none" stroke={WIRE_LIGHT} strokeWidth={14} strokeLinecap="round" />
           </motion.g>
+            </>,
+          )}
 
-          {eye(P.leftWhite, P.leftPupil, 'clappy-eye-l')}
-          {eye(P.rightWhite, P.rightPupil, 'clappy-eye-r')}
-          <path fill="rgb(50,55,65)" d={P.mouth} />
+          {eye(P.leftWhite, P.leftPupil, 'clappy-eye-l', 'leftWhite', 'leftPupil')}
+          {eye(P.rightWhite, P.rightPupil, 'clappy-eye-r', 'rightWhite', 'rightPupil')}
+          {drop('mouth', <path fill="rgb(50,55,65)" d={P.mouth} />)}
         </motion.g>
-      </motion.g>
+      </g>
 
       {/* Lightbulb: Clappy has an idea */}
       <motion.g

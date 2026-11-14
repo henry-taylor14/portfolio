@@ -346,7 +346,7 @@ export default function Clappy() {
             <button
               onClick={handleClose}
               aria-label="Close chat"
-              className="absolute -top-3 -right-3 w-7 h-7 rounded-full after:absolute after:-inset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:focus-visible:outline-pink-300 bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-gray-700 dark:hover:text-gray-200 transition-colors z-10 shadow-sm"
+              className="absolute -top-3 -right-3 w-7 h-7 rounded-full after:absolute after:-inset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:focus-visible:outline-gold-300 bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600 hover:text-gray-700 dark:hover:text-gray-200 transition-colors z-10 shadow-sm"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -361,7 +361,7 @@ export default function Clappy() {
             <div className="flex flex-col flex-1 min-h-0 overflow-hidden rounded-2xl">
               {/* Empty state */}
               {messages.length === 0 && (
-                <div className="flex flex-col bg-purple-200 dark:bg-pink-300 items-center justify-center py-6 px-4">
+                <div className="flex flex-col bg-purple-200 dark:bg-gold-300 items-center justify-center py-6 px-4">
                   <p className="text-xs text-purple-900 font-mono text-center">
                     It looks like you&apos;re browsing this website.
                     <br />I suppose I could help you...
@@ -392,7 +392,7 @@ export default function Clappy() {
                       <div
                         className={`max-w-[85%] px-4 py-2 rounded-2xl text-sm whitespace-pre-wrap [overflow-wrap:anywhere] ${
                           msg.role === 'user'
-                            ? 'bg-purple-800 dark:bg-pink-500 text-white dark:text-purple-800 rounded-br-sm'
+                            ? 'bg-purple-800 dark:bg-gold-400 text-white dark:text-purple-800 rounded-br-sm'
                             : 'bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100 rounded-bl-sm'
                         }`}
                       >
@@ -411,7 +411,7 @@ export default function Clappy() {
                   <button
                     type="button"
                     onClick={() => dialogRef.current?.showModal()}
-                    className="w-full rounded-full bg-purple-800 px-4 py-2.5 text-sm font-mono text-white hover:bg-purple-700 dark:bg-pink-200 dark:text-purple-900 dark:hover:bg-pink-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:focus-visible:outline-pink-300"
+                    className="w-full rounded-full bg-purple-800 px-4 py-2.5 text-sm font-mono text-white hover:bg-purple-700 dark:bg-gold-200 dark:text-purple-900 dark:hover:bg-gold-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:focus-visible:outline-gold-300"
                   >
                     🍪 Run Clappy with Cookies
                   </button>
@@ -420,7 +420,7 @@ export default function Clappy() {
                   </p>
                   <Link
                     href="/contact"
-                    className="block text-center text-sm font-mono underline decoration-brand dark:decoration-pink-300 underline-offset-4 py-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:focus-visible:outline-pink-300"
+                    className="block text-center text-sm font-mono underline decoration-brand dark:decoration-gold-300 underline-offset-4 py-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:focus-visible:outline-gold-300"
                   >
                     Contact Henry instead
                   </Link>
@@ -439,13 +439,13 @@ export default function Clappy() {
                     aria-label="Message Clappy"
                     maxLength={500}
                     disabled={loading}
-                    className="flex-1 text-base sm:text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-full px-4 py-2 outline-none focus-visible:border-purple-600 focus-visible:ring-2 focus-visible:ring-purple-300 dark:focus-visible:border-pink-300 dark:focus-visible:ring-pink-300/40 transition-colors placeholder-gray-600 dark:placeholder-gray-300 disabled:opacity-50"
+                    className="flex-1 text-base sm:text-sm bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-full px-4 py-2 outline-none focus-visible:border-purple-600 focus-visible:ring-2 focus-visible:ring-purple-300 dark:focus-visible:border-gold-300 dark:focus-visible:ring-gold-300/40 transition-colors placeholder-gray-600 dark:placeholder-gray-300 disabled:opacity-50"
                   />
                   <button
                     onClick={() => sendMessage()}
                     disabled={loading || !input.trim()}
                     aria-label="Send message"
-                    className="w-11 h-11 flex-shrink-0 rounded-full bg-purple-800 dark:bg-pink-200 text-white dark:text-purple-800 flex items-center justify-center hover:opacity-80 disabled:opacity-40 transition-opacity focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:focus-visible:outline-pink-300"
+                    className="w-11 h-11 flex-shrink-0 rounded-full bg-purple-800 dark:bg-gold-200 text-white dark:text-purple-800 flex items-center justify-center hover:opacity-80 disabled:opacity-40 transition-opacity focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:focus-visible:outline-gold-300"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -478,7 +478,7 @@ export default function Clappy() {
             <button
               type="button"
               onClick={openChat}
-              className="block rounded-2xl rounded-br-sm bg-purple-200 px-4 py-3 pr-8 text-left font-mono text-xs leading-5 text-purple-900 shadow-lg shadow-purple-950/15 dark:bg-pink-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800"
+              className="block rounded-2xl rounded-br-sm bg-purple-200 px-4 py-3 pr-8 text-left font-mono text-xs leading-5 text-purple-900 shadow-lg shadow-purple-950/15 dark:bg-gold-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800"
             >
               {copy.teaser}
             </button>
@@ -510,7 +510,7 @@ export default function Clappy() {
         aria-label={open ? 'Hide Clappy chat' : 'Chat with Clappy'}
         aria-expanded={open}
         aria-controls="clappy-panel"
-        className="w-16 h-16 sm:w-20 sm:h-20 md:w-30 md:h-30 lg:w-36 lg:h-36 cursor-pointer rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:focus-visible:outline-pink-300"
+        className="w-16 h-16 sm:w-20 sm:h-20 md:w-30 md:h-30 lg:w-36 lg:h-36 cursor-pointer rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:focus-visible:outline-gold-300"
       >
         <ClappyFigure fallen={collapsed} mood={mood} blink={blink} pupilX={pupilX} pupilY={pupilY} reduceMotion={!!reduceMotion} />
       </motion.button>
@@ -536,14 +536,14 @@ export default function Clappy() {
           <button
             type="button"
             onClick={() => dialogRef.current?.close()}
-            className="rounded-full px-4 py-2 text-sm font-mono underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:focus-visible:outline-pink-300"
+            className="rounded-full px-4 py-2 text-sm font-mono underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:focus-visible:outline-gold-300"
           >
             Not now
           </button>
           <button
             type="button"
             onClick={startBackupBrain}
-            className="rounded-full bg-purple-800 px-4 py-2 text-sm font-mono text-white hover:bg-purple-700 dark:bg-pink-200 dark:text-purple-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:focus-visible:outline-pink-300"
+            className="rounded-full bg-purple-800 px-4 py-2 text-sm font-mono text-white hover:bg-purple-700 dark:bg-gold-200 dark:text-purple-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-800 dark:focus-visible:outline-gold-300"
           >
             Run backup Clappy
           </button>
