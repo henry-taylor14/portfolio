@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "ai-color-palette",
+        "value": "*",
+        "files": [
+          "app/page.tsx"
+        ],
+        "createdAt": "2026-11-11T18:35:32.106Z",
+        "reason": "user requested a salmon-to-plum hero gradient in dark mode; plum #513952 and salmon #f9c2bc are the site's existing brand colors"
+      }
+    ]
+  }
+}

@@ -1,27 +1,36 @@
 'use client'
 
-import {useEffect, useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import Link from 'next/link'
 import HerotaText from './HerotaText'
 import HerotaIcon from './HerotaIcon'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const openButtonRef = useRef<HTMLButtonElement>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const wasOpen = useRef(false)
 
-  // Lock scroll when menu open (recommended)
+  // Lock scroll, move focus into the menu, close on Esc, and return focus to the menu button on close.
   useEffect(() => {
     document.body.style.overflow = mobileMenuOpen ? 'hidden' : ''
+    if (mobileMenuOpen) closeButtonRef.current?.focus()
+    else if (wasOpen.current) openButtonRef.current?.focus()
+    wasOpen.current = mobileMenuOpen
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setMobileMenuOpen(false)
+    if (mobileMenuOpen) window.addEventListener('keydown', onKey)
     return () => {
       document.body.style.overflow = ''
+      window.removeEventListener('keydown', onKey)
     }
   }, [mobileMenuOpen])
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 h-24 bg-purple-800 dark:bg-pink-600 backdrop-blur-lg flex items-center">
+      <header className="fixed top-0 left-0 right-0 z-50 h-24 bg-purple-800 dark:bg-pink-600 flex items-center">
         <div className="container py-6 px-2 sm:px-6">
           <div className="flex items-center justify-between gap-5">
-            <Link className="flex items-center gap-2 m-2" href="/">
+            <Link className="flex items-center gap-2 m-2" href="/" aria-label="Herota Tech home">
               <span className="hidden sm:block">
                 <HerotaText />
               </span>
@@ -40,7 +49,7 @@ export default function Header() {
                 </li>
                 <li>
                   <Link href="/posts" className="rounded-full bg-black px-6 py-3 text-white">
-                    Latest Posts
+                    Projects
                   </Link>
                 </li>
               </ul>
@@ -48,9 +57,11 @@ export default function Header() {
 
             {!mobileMenuOpen && (
               <button
-                className="md:hidden p-2 text-white"
+                ref={openButtonRef}
+                className="md:hidden p-2 text-white dark:text-purple-800"
                 onClick={() => setMobileMenuOpen(true)}
                 aria-label="Open menu"
+                aria-expanded={false}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -74,7 +85,11 @@ export default function Header() {
 
       {/* MOBILE MENU OVERLAY */}
       <div
-        className={`bg-black/95 backdrop-blur-sm ease-[cubic-bezier(.4,0,.2,1)] motion-reduce:transition-none
+        role="dialog"
+        aria-modal="true"
+        aria-label="Site menu"
+        inert={!mobileMenuOpen}
+        className={`ease-[cubic-bezier(.4,0,.2,1)] motion-reduce:transition-none
           fixed inset-0 z-[60] md:hidden bg-black text-white
           transform transition-transform duration-300 ease-in-out
           ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}
@@ -83,11 +98,11 @@ export default function Header() {
       >
         {/* Menu Header */}
         <div className="flex items-center justify-between px-4 py-4 border-b border-white/20">
-          <Link href="/" onClick={() => setMobileMenuOpen(false)}>
+          <Link href="/" aria-label="Herota Tech home" onClick={() => setMobileMenuOpen(false)}>
             <HerotaIcon size={56} />
           </Link>
 
-          <button onClick={() => setMobileMenuOpen(false)} aria-label="Close menu" className="p-2">
+          <button ref={closeButtonRef} onClick={() => setMobileMenuOpen(false)} aria-label="Close menu" className="p-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -120,7 +135,7 @@ export default function Header() {
                 className="flex justify-center rounded-full bg-white text-black py-3 px-6"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                Latest Posts
+                Projects
               </Link>
             </li>
           </ul>

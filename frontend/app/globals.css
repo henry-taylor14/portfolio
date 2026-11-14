@@ -9,6 +9,7 @@
   padding: 0 2rem;
 }
 
+/* ponytail: grays tinted toward brand plum (h330) so template neutrals sit inside the pink/plum world */
 @theme {
   --shadow-layer: 0 35px 60px -15px rgba(0, 0, 0, 0.3);
 
@@ -18,17 +19,17 @@
   --color-brand: #513952;
   --color-blue: #0052ff;
   --color-yellow: #cdea19;
-  --color-gray-50: #f6f6f8;
-  --color-gray-100: #eeeef1;
-  --color-gray-200: #e3e4e8;
-  --color-gray-300: #bbbdc9;
-  --color-gray-400: #9499ad;
-  --color-gray-500: #727892;
-  --color-gray-600: #515870;
-  --color-gray-700: #383d51;
-  --color-gray-800: #252837;
-  --color-gray-900: #1b1d27;
-  --color-gray-950: #13141b;
+  --color-gray-50: oklch(0.975 0.006 330);
+  --color-gray-100: oklch(0.955 0.009 330);
+  --color-gray-200: oklch(0.925 0.012 330);
+  --color-gray-300: oklch(0.83 0.02 330);
+  --color-gray-400: oklch(0.7 0.03 330);
+  --color-gray-500: oklch(0.57 0.035 330);
+  --color-gray-600: oklch(0.47 0.035 330);
+  --color-gray-700: oklch(0.37 0.035 330);
+  --color-gray-800: oklch(0.29 0.03 330);
+  --color-gray-900: oklch(0.23 0.025 330);
+  --color-gray-950: oklch(0.18 0.02 330);
   --color-purple-50: #faf7fb;
   --color-purple-100: #f2eaf4;
   --color-purple-200: #e5d6e8;
@@ -60,17 +61,47 @@
   --color-gold-400: #e1bb51;
   --color-gold-500: #d8aa2b;
   --color-gold-600: #ab8621;
+  --color-gold-650: #917321;
   --color-gold-700: #776022;
+
+  --color-rust: #8a443d;
   --color-gold-800: #51441f;
   --color-gold-900: #372f1b;
   --color-gold-950: #282315;
 
   --animate-shine: shine 0.6s ease-in-out;
 
-  --font-display: 'Inter', 'sans-serif';
-  --font-sans: 'Inter', 'sans-serif';
+  /* next/font registers Inter under a hashed family name exposed as --font-inter. */
+  --font-display: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
   --default-transition-duration: 250ms;
+}
+
+/* ponytail: dark mode retunes the token values instead of rewriting every dark: class.
+   Grays → cool charcoal scale anchored on #F4F5F7 / #9AA0A6 / #3A3A40,
+   deep purples → plum palette (#2A0F24 base, #4F1C44 surface). Gold is the dark accent (dark:*gold-* classes).
+   Only affects what renders in dark mode; light mode keeps the @theme values above. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-gray-50: #f9f9fa;
+    --color-gray-100: #f4f5f7;
+    --color-gray-200: #e3e5e8;
+    --color-gray-300: #c2c6cb;
+    --color-gray-400: #9aa0a6;
+    --color-gray-500: #767b82;
+    --color-gray-600: #55585f;
+    --color-gray-700: #3a3a40;
+    --color-gray-800: #2c2c31;
+    --color-gray-900: #1f1f23;
+    --color-gray-950: #141417;
+
+    --color-purple-600: #874078;
+    --color-purple-700: #6a2a5c;
+    --color-purple-800: #4f1c44;
+    --color-purple-900: #2a0f24;
+    --color-purple-950: #210b1c;
+  }
 }
 
 @keyframes shine {
@@ -82,4 +113,27 @@
     transform: translateX(200%) skewX(-20deg);
     opacity: 1;
   }
+}
+
+::selection {
+  background: var(--color-pink-300);
+  color: var(--color-black);
+}
+@media (prefers-color-scheme: dark) {
+  ::selection {
+    background: var(--color-purple-600);
+    color: var(--color-white);
+  }
+}
+html {
+  caret-color: var(--color-purple-800);
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+p {
+  text-wrap: pretty;
 }

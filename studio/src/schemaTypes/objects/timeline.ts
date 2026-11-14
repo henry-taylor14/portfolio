@@ -40,6 +40,12 @@ export const timeline = defineType({
               validation: (Rule) => Rule.required(),
             }),
             defineField({
+              name: 'subtitle',
+              title: 'Organization',
+              type: 'string',
+              placeholder: 'e.g. Company or school',
+            }),
+            defineField({
               name: 'description',
               title: 'Description',
               type: 'text',
@@ -51,12 +57,13 @@ export const timeline = defineType({
               title: 'title',
               month: 'month',
               year: 'year',
+              org: 'subtitle',
             },
-            prepare({title, month, year}) {
+            prepare({title, month, year, org}) {
               const date = [month, year].filter(Boolean).join(' ')
               return {
                 title: title || 'Untitled',
-                subtitle: date || 'No date',
+                subtitle: [date || 'No date', org].filter(Boolean).join(' · '),
               }
             },
           },

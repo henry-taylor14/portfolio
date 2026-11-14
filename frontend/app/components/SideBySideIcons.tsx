@@ -39,11 +39,11 @@ export default function SideBySideIcons() {
           'hover-device:group-hover:scale-125 hover-device:group-hover:-translate-x-5 sm:hover-device:group-hover:-translate-x-8',
         ].join(' ')}
       >
-        <Link href="/about">
+        <Link href="/about" aria-label="About Henry Taylor">
           <Image
             src="/images/headshot.jpg"
             fill={true}
-            alt="Picture of Henry Taylor"
+            alt=""
             className="rounded-full aspect-square object-cover contrast-110 saturate-125"
           />
         </Link>
@@ -74,7 +74,7 @@ export default function SideBySideIcons() {
           'hover-device:group-hover:scale-125 hover-device:group-hover:translate-x-5 sm:hover-device:group-hover:translate-x-8',
         ].join(' ')}
       >
-        <Link href="/contact" className="w-full h-full flex items-center justify-center">
+        <Link href="/contact" aria-label="Contact Henry" className="w-full h-full flex items-center justify-center">
           <Envelope />
         </Link>
       </div>

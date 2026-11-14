@@ -8,7 +8,10 @@ type ContactPayload = {
   email?: string;
   message?: string;
   hp?: string; 
+  topic?: string;
 };
+
+const TOPICS = ["Hiring", "Project inquiry", "Just saying hi"];
 
 const RATE_LIMIT_WINDOW_MS = 1000 * 60 * 1;
 const RATE_LIMIT_MAX = 4; 
@@ -35,6 +38,11 @@ function sanitize(str = "") {
   return String(str).trim();
 }
 
+// Visitor input goes into an HTML email: escape it so a crafted name can't inject markup.
+function esc(str: string) {
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
 export async function POST(request: Request) {
   try {
     const body: ContactPayload = await request.json();
@@ -46,22 +54,24 @@ export async function POST(request: Request) {
     const name = sanitize(body.name || "No name");
     const email = sanitize(body.email || "No email");
     const message = sanitize(body.message || "");
+    const topic = TOPICS.includes(String(body.topic)) ? String(body.topic) : "General";
     if (!message || message.length < 5) {
       return NextResponse.json({ ok: false, error: "Message is too short." }, { status: 400 });
     }
 
     const ip = getIpFromReq(request);
     if (!rateAllowed(ip)) {
-      return NextResponse.json({ ok: false, error: "Rate limit exceeded." }, { status: 429 });
+      return NextResponse.json({ ok: false, error: "That's a lot of messages in a minute. Please wait a moment and try again." }, { status: 429 });
     }
 
     const html = `
       <div style="font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color:#111;">
-        <h2>New contact message from ${name}</h2>
-        <p><strong>From:</strong> ${email}</p>
+        <h2>New contact message from ${esc(name)}</h2>
+        <p><strong>Topic:</strong> ${esc(topic)}</p>
+        <p><strong>From:</strong> ${esc(email)}</p>
         <p><strong>IP:</strong> ${ip}</p>
         <hr/>
-        <div style="white-space: pre-wrap;">${message.replace(/</g, "&lt;")}</div>
+        <div style="white-space: pre-wrap;">${esc(message)}</div>
         <hr/>
         <small>Sent from herotatech.com contact form</small>
       </div>
@@ -79,7 +89,7 @@ export async function POST(request: Request) {
     const payload = {
       from: FROM,
       to: [TO],
-      subject: `New contact form: ${name}`,
+      subject: `[${topic}] New contact form: ${name.replace(/[\r\n]+/g, " ").slice(0, 80)}`,
       html,
     };
 

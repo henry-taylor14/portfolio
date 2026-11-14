@@ -34,7 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
           _key: '4a58edd077880',
           _type: 'span',
           marks: [],
-          text: 'A portfolio for Henry Taylor',
+          text: 'Full-stack & AI engineer. I build web apps, AI features, and automations that remove manual work.',
         },
       ],
     },
@@ -74,7 +74,7 @@ export default async function RootLayout({children}: {children: React.ReactNode}
   return (
     <html
       lang="en"
-      className={`${inter.variable} bg-pink-500 text-black dark:bg-purple-900 dark:text-white`}
+      className={`${inter.variable} bg-pink-50 text-black dark:bg-purple-900 dark:text-white`}
     >
       <body>
         <section className="min-h-screen pt-24">

@@ -21,5 +21,5 @@ export default function CoverImage(props: CoverImageProps) {
     />
   ) : null
 
-  return <div className="relative">{image}</div>
+  return <div className="relative dark:bg-pink-700">{image}</div>
 }

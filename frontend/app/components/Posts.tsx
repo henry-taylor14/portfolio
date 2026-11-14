@@ -4,11 +4,11 @@ import {morePostsQuery, allPostsQuery} from '@/sanity/lib/queries'
 import {Post as PostType, AllPostsQueryResult} from '@/sanity.types'
 import DateComponent from '@/app/components/Date'
 import OnBoarding from '@/app/components/Onboarding'
-import Avatar from '@/app/components/Avatar'
+import CoverImage from '@/app/components/CoverImage'
 import {createDataAttribute} from 'next-sanity'
 
-const Post = ({post}: {post: AllPostsQueryResult[number]}) => {
-  const {_id, title, slug, excerpt, date, author} = post
+const Post = ({post, featured = false}: {post: AllPostsQueryResult[number]; featured?: boolean}) => {
+  const {_id, title, slug, excerpt, date, stack, coverImage} = post
 
   const attr = createDataAttribute({
     id: _id,
@@ -20,25 +20,42 @@ const Post = ({post}: {post: AllPostsQueryResult[number]}) => {
     <article
       data-sanity={attr()}
       key={_id}
-      className="border border-gray-200 rounded-sm p-6 bg-gray-50 dark:bg-gray-700 hover:dark:bg-gray-900 flex flex-col justify-between transition-colors hover:bg-white relative"
+      className={`group relative flex flex-col overflow-hidden rounded-sm ${featured ? '@3xl:col-span-2 @3xl:flex-row' : ''} border border-pink-200 bg-white dark:border-purple-800 dark:bg-purple-900 transition-colors hover:border-purple-300 dark:hover:border-purple-600 has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-4 has-[a:focus-visible]:outline-purple-800 dark:has-[a:focus-visible]:outline-pink-500`}
     >
-      <Link className="hover:text-brand underline transition-colors" href={`/posts/${slug}`}>
-        <span className="absolute inset-0 z-10" />
-      </Link>
-      <div>
-        <h3 className="text-2xl font-bold mb-4 leading-tight">{title}</h3>
-
-        <p className="line-clamp-3 text-sm leading-6 text-gray-600 dark:text-gray-100 max-w-[70ch]">{excerpt}</p>
-      </div>
-      <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-100">
-        {author && author.firstName && author.lastName && (
-          <div className="flex items-center">
-            <Avatar person={author} small={true} />
-          </div>
+      {coverImage?.asset?._ref && (
+        <div
+          className={`relative aspect-[16/10] overflow-hidden border-b border-pink-200 dark:border-purple-800 [&>div]:absolute [&>div]:inset-0 [&_img]:h-full [&_img]:w-full [&_img]:object-cover [&_img]:transition-transform [&_img]:duration-500 [&_img]:ease-out group-hover:[&_img]:scale-[1.02] ${featured ? '@3xl:w-1/2 @3xl:shrink-0 @3xl:self-start @3xl:border-b-0 @3xl:border-r @3xl:border-pink-200 dark:@3xl:border-purple-800' : ''}`}
+        >
+          <CoverImage image={coverImage} />
+        </div>
+      )}
+      <div className={`flex flex-1 flex-col p-6 ${featured ? '@3xl:justify-center @3xl:p-10' : ''}`}>
+        <h3 className={`font-bold leading-tight text-balance ${featured ? 'text-2xl @3xl:text-4xl @3xl:tracking-tight' : 'text-2xl'}`}>
+          <Link href={`/posts/${slug}`} className="outline-none after:absolute after:inset-0 after:z-10">
+            {title}
+          </Link>
+        </h3>
+        {excerpt && (
+          <p className="mt-2 line-clamp-3 max-w-[65ch] text-base leading-7 text-gray-600 dark:text-gray-100">
+            {excerpt}
+          </p>
         )}
-        <time className="text-gray-500 text-xs font-mono" dateTime={date}>
-          <DateComponent dateString={date} />
-        </time>
+        <div className={`mt-auto flex flex-wrap items-end justify-between gap-x-6 gap-y-3 pt-8 ${featured ? '@3xl:mt-0' : ''}`}>
+          {stack && stack.length > 0 ? (
+            <ul className="flex flex-wrap gap-2 font-mono text-xs" aria-label="Stack">
+              {stack.map((tool) => (
+                <li key={tool} className="bg-pink-100 px-2 py-1 text-purple-900 dark:bg-purple-800 dark:text-gold-100">
+                  {tool}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <span />
+          )}
+          <time className="font-mono text-xs text-gray-600 dark:text-gray-200" dateTime={date}>
+            <DateComponent dateString={date} />
+          </time>
+        </div>
       </div>
     </article>
   )
@@ -48,19 +65,26 @@ const Posts = ({
   children,
   heading,
   subHeading,
+  pageTitle = false,
 }: {
   children: React.ReactNode
   heading?: string
   subHeading?: string
+  pageTitle?: boolean
 }) => (
   <div>
-    {heading && (
-      <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-200 sm:text-4xl lg:text-5xl">
-        {heading}
-      </h2>
-    )}
+    {heading &&
+      (pageTitle ? (
+        <h1 className="text-4xl font-bold tracking-tight text-balance text-gray-900 dark:text-gray-100 sm:text-5xl lg:text-7xl">{heading}</h1>
+      ) : (
+        <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-200 sm:text-4xl lg:text-5xl">
+          {heading}
+        </h2>
+      ))}
     {subHeading && <p className="mt-2 text-lg leading-8 text-gray-600 dark:text-gray-300">{subHeading}</p>}
-    <div className="pt-6 space-y-6">{children}</div>
+    <div className="@container mt-8">
+      <div className="grid gap-6 @3xl:grid-cols-2">{children}</div>
+    </div>
   </div>
 )
 
@@ -75,7 +99,7 @@ export const MorePosts = async ({skip, limit}: {skip: string; limit: number}) =>
   }
 
   return (
-    <Posts heading={`Recent Posts (${data?.length})`}>
+    <Posts heading="More projects">
       {data?.map((post: any) => (
         <Post key={post._id} post={post} />
       ))}
@@ -83,7 +107,7 @@ export const MorePosts = async ({skip, limit}: {skip: string; limit: number}) =>
   )
 }
 
-export const AllPosts = async () => {
+export const AllPosts = async ({pageTitle = false}: {pageTitle?: boolean} = {}) => {
   const {data} = await sanityFetch({query: allPostsQuery})
 
   if (!data || data.length === 0) {
@@ -93,10 +117,11 @@ export const AllPosts = async () => {
   return (
     <Posts
       heading="Projects"
-      subHeading={`${data.length === 1 ? 'This project is' : `These projects are`} what I've been working on lately.`}
+      subHeading="What I've built lately."
+      pageTitle={pageTitle}
     >
-      {data.map((post: any) => (
-        <Post key={post._id} post={post} />
+      {data.map((post: any, i: number) => (
+        <Post key={post._id} post={post} featured={i === 0} />
       ))}
     </Posts>
   )

@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "ai-color-palette",
+        "value": "*",
+        "files": [
+          "frontend/app/components/Timeline.tsx"
+        ],
+        "createdAt": "2026-11-14T15:19:13.798Z",
+        "reason": "Claude decided: purple-*/pink-* are remapped brand tokens in frontend/app/globals.css (plum #513952, #a682aa, peach #f9c2bc), not stock violet"
+      }
+    ]
+  }
+}
